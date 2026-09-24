@@ -34,6 +34,7 @@ class Inquiry extends Model
         'whatsapp',
         'country',
         'special_requests',
+        'internal_notes',
         'status',
         'ip_address',
         'user_agent',
@@ -65,7 +66,7 @@ class Inquiry extends Model
                 $inquiry->token = (string) Str::uuid();
             }
             if (empty($inquiry->reference)) {
-                $inquiry->reference = 'GS-' . strtoupper(Str::random(6));
+                $inquiry->reference = 'GS-'.strtoupper(Str::random(6));
             }
         });
     }
@@ -101,9 +102,9 @@ class Inquiry extends Model
             default => ucfirst($this->traveller_type),
         };
 
-        $counts = "{$this->adults_count} " . Str::plural('Adult', $this->adults_count);
+        $counts = "{$this->adults_count} ".Str::plural('Adult', $this->adults_count);
         if ($this->children_count > 0) {
-            $counts .= ", {$this->children_count} " . Str::plural('Child', $this->children_count);
+            $counts .= ", {$this->children_count} ".Str::plural('Child', $this->children_count);
         }
 
         return "{$base} ({$counts})";
@@ -140,28 +141,28 @@ class Inquiry extends Model
         $text = "Hello Gentriiq Safaris & Tours!\n";
         $text .= "I have customized a safari plan on your website.\n\n";
         $text .= "Booking Ref: {$this->reference}\n";
-        $text .= 'View Full Plan: ' . $this->share_url . "\n\n";
+        $text .= 'View Full Plan: '.$this->share_url."\n\n";
         if ($this->tour) {
             $text .= "- Package: {$this->tour->title}\n";
         }
         if ($this->destination) {
             $text .= "- Destination: {$this->destination->name}\n";
         }
-        $text .= '- Trip Type: ' . $this->trip_type_label . "\n";
-        $text .= '- Travelers: ' . $this->traveller_label . "\n";
+        $text .= '- Trip Type: '.$this->trip_type_label."\n";
+        $text .= '- Travelers: '.$this->traveller_label."\n";
         $travelDate = $this->travel_date
             ? Carbon::parse((string) $this->travel_date)->format('M d, Y')
             : "{$this->travel_month} {$this->travel_year}";
-        $text .= "- Travel Date: {$travelDate}" . ($this->travel_season ? " ({$this->travel_season})" : '') . "\n";
-        $text .= '- Duration: ' . $this->duration_label . "\n";
-        $text .= '- Accommodation: ' . $this->accommodation_label . "\n";
-        $text .= "- Lead Guest: {$this->name}" . ($this->country ? " ({$this->country})" : '') . "\n";
+        $text .= "- Travel Date: {$travelDate}".($this->travel_season ? " ({$this->travel_season})" : '')."\n";
+        $text .= '- Duration: '.$this->duration_label."\n";
+        $text .= '- Accommodation: '.$this->accommodation_label."\n";
+        $text .= "- Lead Guest: {$this->name}".($this->country ? " ({$this->country})" : '')."\n";
         $text .= "- Email: {$this->email}\n";
         if ($this->whatsapp || $this->phone) {
-            $text .= '- Phone: ' . ($this->whatsapp ?: $this->phone) . "\n";
+            $text .= '- Phone: '.($this->whatsapp ?: $this->phone)."\n";
         }
         if ($this->special_requests) {
-            $text .= '- Safari Wishlist: ' . Str::limit($this->special_requests, 100) . "\n";
+            $text .= '- Safari Wishlist: '.Str::limit($this->special_requests, 100)."\n";
         }
         $text .= "\nPlease share a personalized itinerary and quote. Thank you!";
 
@@ -170,6 +171,6 @@ class Inquiry extends Model
 
     public function getWhatsAppUrlAttribute(): string
     {
-        return 'https://wa.me/254717838061?text=' . urlencode($this->whatsapp_message);
+        return 'https://wa.me/254717838061?text='.urlencode($this->whatsapp_message);
     }
 }

@@ -26,6 +26,16 @@ class User extends Authenticatable
     public const ROLE_EDITOR = 'editor';
 
     /**
+     * The model's default values for attributes.
+     *
+     * @var array<string, mixed>
+     */
+    protected $attributes = [
+        'role' => self::ROLE_ADMIN,
+        'is_active' => true,
+    ];
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>

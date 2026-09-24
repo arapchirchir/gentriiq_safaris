@@ -8,17 +8,17 @@
         $currentMonthIndex = (int) date('n');
         $years = range($currentYear, $currentYear + 3);
         $months = [
-            ['index' => 1, 'name' => 'January', 'season' => 'High Season &bull; Calving & Wildlife'],
-            ['index' => 2, 'name' => 'February', 'season' => 'High Season &bull; Sunny & Dry'],
-            ['index' => 3, 'name' => 'March', 'season' => 'Shoulder Season &bull; Good Value'],
-            ['index' => 4, 'name' => 'April', 'season' => 'Green Season &bull; Lush & Quiet'],
-            ['index' => 5, 'name' => 'May', 'season' => 'Green Season &bull; Beautiful Skies'],
-            ['index' => 6, 'name' => 'June', 'season' => 'Shoulder Season &bull; Migration Arrival'],
-            ['index' => 7, 'name' => 'July', 'season' => 'Peak Season &bull; Great Migration'],
-            ['index' => 8, 'name' => 'August', 'season' => 'Peak Season &bull; Mara River Crossings'],
-            ['index' => 9, 'name' => 'September', 'season' => 'Peak Season &bull; Prime Predator Action'],
-            ['index' => 10, 'name' => 'October', 'season' => 'Peak Season &bull; Dry Plains & Migration'],
-            ['index' => 11, 'name' => 'November', 'season' => 'Short Rains &bull; Baby Animals'],
+            ['index' => 1, 'name' => 'January', 'season' => 'High Season • Calving & Wildlife'],
+            ['index' => 2, 'name' => 'February', 'season' => 'High Season • Sunny & Dry'],
+            ['index' => 3, 'name' => 'March', 'season' => 'Shoulder Season • Good Value'],
+            ['index' => 4, 'name' => 'April', 'season' => 'Green Season • Lush & Quiet'],
+            ['index' => 5, 'name' => 'May', 'season' => 'Green Season • Beautiful Skies'],
+            ['index' => 6, 'name' => 'June', 'season' => 'Shoulder Season • Migration Arrival'],
+            ['index' => 7, 'name' => 'July', 'season' => 'Peak Season • Great Migration'],
+            ['index' => 8, 'name' => 'August', 'season' => 'Peak Season • Mara River Crossings'],
+            ['index' => 9, 'name' => 'September', 'season' => 'Peak Season • Prime Predator Action'],
+            ['index' => 10, 'name' => 'October', 'season' => 'Peak Season • Dry Plains & Migration'],
+            ['index' => 11, 'name' => 'November', 'season' => 'Short Rains • Baby Animals'],
             ['index' => 12, 'name' => 'December', 'season' => 'High Festive Season'],
         ];
 
@@ -53,7 +53,7 @@
         notes: '',
         monthsList: {{ json_encode($months) }},
         minDateStr: '{{ $minimumTravelDate }}',
-
+    
         getDurationDays() {
             if (this.duration === '2-3_days') return 3;
             if (this.duration === '4-6_days') return 5;
@@ -61,12 +61,12 @@
             if (this.duration === '10plus_days') return 10;
             return this.durationDays || 7;
         },
-
+    
         setDuration(dur, days) {
             this.duration = dur;
             this.durationDays = days;
         },
-
+    
         getEndDateStr() {
             if (!this.travelDate) return '';
             const parts = this.travelDate.split('-');
@@ -81,7 +81,7 @@
             const endD = String(dt.getDate()).padStart(2, '0');
             return `${endY}-${endM}-${endD}`;
         },
-
+    
         formatDisplayDate(dateStr) {
             if (!dateStr) return '';
             const parts = dateStr.split('-');
@@ -89,23 +89,23 @@
             const dt = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
             return dt.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
         },
-
+    
         isPastMonth(monthIndex) {
             return parseInt(this.year, 10) === this.currentYear && monthIndex < this.currentMonthIndex;
         },
-
+    
         selectMonth(mObj) {
             if (this.isPastMonth(mObj.index)) return;
             this.month = mObj.name;
             this.season = mObj.season;
             this.monthIndex = mObj.index;
-
+    
             const expectedPrefix = `${this.year}-${String(mObj.index).padStart(2, '0')}-`;
             if (!this.travelDate || !this.travelDate.startsWith(expectedPrefix)) {
                 const totalDays = new Date(parseInt(this.year, 10), mObj.index, 0).getDate();
                 const minParts = this.minDateStr.split('-');
                 const minDateObj = new Date(parseInt(minParts[0], 10), parseInt(minParts[1], 10) - 1, parseInt(minParts[2], 10));
-
+    
                 for (let d = 1; d <= totalDays; d++) {
                     const check = new Date(parseInt(this.year, 10), mObj.index - 1, d);
                     if (check >= minDateObj) {
@@ -115,7 +115,7 @@
                 }
             }
         },
-
+    
         selectYear(y) {
             this.year = y;
             if (parseInt(y, 10) === this.currentYear && this.monthIndex < this.currentMonthIndex) {
@@ -130,7 +130,7 @@
                 this.selectMonth(currentM);
             }
         },
-
+    
         selectDay(d) {
             if (d.disabled) return;
             this.travelDate = d.dateStr;
@@ -143,34 +143,34 @@
                 this.season = mObj.season;
             }
         },
-
+    
         getCalendarDays() {
             const y = parseInt(this.year, 10);
             const m = parseInt(this.monthIndex, 10);
             const totalDays = new Date(y, m, 0).getDate();
             const firstDay = new Date(y, m - 1, 1).getDay();
             const blankCount = (firstDay + 6) % 7;
-
+    
             const days = [];
             for (let i = 0; i < blankCount; i++) {
                 days.push({ isBlank: true, key: 'b-' + i });
             }
-
+    
             const minParts = this.minDateStr.split('-');
             const minDateObj = new Date(parseInt(minParts[0], 10), parseInt(minParts[1], 10) - 1, parseInt(minParts[2], 10));
             const endStr = this.getEndDateStr();
-
+    
             for (let d = 1; d <= totalDays; d++) {
                 const dStr = String(d).padStart(2, '0');
                 const mStr = String(m).padStart(2, '0');
                 const fullDateStr = `${y}-${mStr}-${dStr}`;
                 const dayObj = new Date(y, m - 1, d);
-
+    
                 const isDisabled = dayObj < minDateObj;
                 const isStart = fullDateStr === this.travelDate;
                 const isEnd = fullDateStr === endStr;
                 const isInRange = this.travelDate && endStr && (fullDateStr >= this.travelDate && fullDateStr <= endStr);
-
+    
                 days.push({
                     isBlank: false,
                     dayNumber: d,
@@ -184,7 +184,7 @@
             }
             return days;
         },
-
+    
         toggleTripType(type) {
             if (this.tripTypes.includes(type)) {
                 if (this.tripTypes.length > 1) {
@@ -194,11 +194,11 @@
                 this.tripTypes.push(type);
             }
         },
-
+    
         isTripTypeSelected(type) {
             return this.tripTypes.includes(type);
         },
-
+    
         getTripTypeLabel() {
             const labels = {
                 'safari': 'Wildlife Safari',
@@ -208,38 +208,38 @@
             };
             return this.tripTypes.map(t => labels[t] || t).join(' + ');
         },
-
+    
         getTravellerLabel() {
             const base = {
                 'solo': 'Solo Traveler',
                 'partner': 'Couple / Partner',
                 'family': 'Family Holiday',
                 'group': 'Private Group'
-            }[this.travellerType] || this.travellerType;
+            } [this.travellerType] || this.travellerType;
             let counts = `${this.adults} ` + (this.adults === 1 ? 'Adult' : 'Adults');
             if (this.children > 0) {
                 counts += `, ${this.children} ` + (this.children === 1 ? 'Child' : 'Children');
             }
             return `${base} (${counts})`;
         },
-
+    
         getDurationLabel() {
             return {
                 '2-3_days': '2 to 3 Days (Short Safari Getaway)',
                 '4-6_days': '4 to 6 Days (Highlights)',
                 '7-9_days': '7 to 9 Days (Classic Experience)',
                 '10plus_days': '10+ Days (Grand Expedition)'
-            }[this.duration] || this.duration;
+            } [this.duration] || this.duration;
         },
-
+    
         getAccommodationLabel() {
             return {
                 'comfort': 'Comfort / Mid-Range ($)',
                 'luxury': 'Luxury Safari Lodges ($$ 4-5 Star)',
                 'signature_luxury': 'Signature Ultra-Luxury ($$$)'
-            }[this.accommodation] || this.accommodation;
+            } [this.accommodation] || this.accommodation;
         },
-
+    
         canProceed() {
             if (this.step === 1) return this.tripTypes.length >= 1;
             if (this.step === 2) return !!this.travellerType && this.adults >= 1;
@@ -248,14 +248,14 @@
             if (this.step === 5) return !!this.accommodation;
             return true;
         },
-
+    
         nextStep() {
             if (this.canProceed() && this.step < this.totalSteps) {
                 this.step++;
                 window.scrollTo({ top: 100, behavior: 'smooth' });
             }
         },
-
+    
         prevStep() {
             if (this.step > 1) {
                 this.step--;
@@ -323,7 +323,7 @@
                         <h2 class="text-2xl font-extrabold text-[#211915] sm:text-3xl dark:text-white">
                             What kind of trip are you dreaming of?
                         </h2>
-                        <span class="rounded-full bg-[#D96B27]/10 px-3 py-1 text-xs font-bold text-[#D96B27]">
+                        <span class="rounded-full hidden bg-[#D96B27]/10 px-3 py-1 text-xs font-bold text-[#D96B27]">
                             Multi-select enabled
                         </span>
                     </div>
@@ -596,10 +596,10 @@
                         <h2 class="text-2xl font-extrabold text-[#211915] sm:text-3xl dark:text-white">
                             Tour Duration
                         </h2>
-                        <span class="text-xs font-semibold text-[#D96B27]">Step 3 of 6</span>
                     </div>
                     <p class="mt-2 text-sm text-[#6E635C] dark:text-[#FAF6F0]/70">
-                        How many days would you like to spend exploring East Africa? We will calculate your travel dates in the next step.
+                        How many days would you like to spend exploring East Africa? We will calculate your travel dates
+                        in the next step.
                     </p>
 
                     <div class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -610,7 +610,8 @@
                             class="flex flex-col rounded-sm border p-6 text-left transition-all">
                             <span class="text-xl font-bold text-[#211915] dark:text-white">2 to 3 DAYS</span>
                             <span class="mt-1 text-xs font-semibold text-[#D96B27]">3 Days Itinerary</span>
-                            <span class="mt-2 text-xs text-[#6E635C] dark:text-[#FAF6F0]/70">Perfect for a short safari getaway to Amboseli or Maasai Mara.</span>
+                            <span class="mt-2 text-xs text-[#6E635C] dark:text-[#FAF6F0]/70">Perfect for a short safari
+                                getaway to Amboseli or Maasai Mara.</span>
                         </button>
 
                         <button type="button" @click="setDuration('4-6_days', 5)"
@@ -618,10 +619,12 @@
                                 'border-[#D96B27] bg-[#FAF6F0] ring-2 ring-[#D96B27]/20 dark:bg-[#180D08]' :
                                 'border-black/10 bg-transparent dark:border-white/10'"
                             class="relative flex flex-col rounded-sm border p-6 text-left transition-all">
-                            <span class="absolute top-3 right-3 rounded-full bg-[#D96B27] px-2 py-0.5 text-[10px] font-semibold text-white">Recommended</span>
+                            <span
+                                class="absolute top-3 right-3 rounded-full bg-[#D96B27] px-2 py-0.5 text-[10px] font-semibold text-white">Recommended</span>
                             <span class="text-xl font-bold text-[#211915] dark:text-white">4 to 6 DAYS</span>
                             <span class="mt-1 text-xs font-semibold text-[#D96B27]">5 Days Itinerary</span>
-                            <span class="mt-2 text-xs text-[#6E635C] dark:text-[#FAF6F0]/70">East Africa safari highlights: Maasai Mara & Lake Nakuru.</span>
+                            <span class="mt-2 text-xs text-[#6E635C] dark:text-[#FAF6F0]/70">East Africa safari
+                                highlights: Maasai Mara & Lake Nakuru.</span>
                         </button>
 
                         <button type="button" @click="setDuration('7-9_days', 7)"
@@ -629,10 +632,13 @@
                                 'border-[#D96B27] bg-[#FAF6F0] ring-2 ring-[#D96B27]/20 dark:bg-[#180D08]' :
                                 'border-black/10 bg-transparent dark:border-white/10'"
                             class="relative flex flex-col rounded-sm border p-6 text-left transition-all">
-                            <span class="absolute top-3 right-3 rounded-full bg-[#24140E] px-2 py-0.5 text-[10px] font-semibold text-white">Most Popular</span>
+                            <span
+                                class="absolute top-3 right-3 rounded-full bg-[#24140E] px-2 py-0.5 text-[10px] font-semibold text-white">Most
+                                Popular</span>
                             <span class="text-xl font-bold text-[#211915] dark:text-white">7 to 9 DAYS</span>
                             <span class="mt-1 text-xs font-semibold text-[#D96B27]">7 Days Itinerary</span>
-                            <span class="mt-2 text-xs text-[#6E635C] dark:text-[#FAF6F0]/70">Classic comprehensive safari: Mara, Amboseli, Nakuru & Naivasha.</span>
+                            <span class="mt-2 text-xs text-[#6E635C] dark:text-[#FAF6F0]/70">Classic comprehensive
+                                safari: Mara, Amboseli, Nakuru & Naivasha.</span>
                         </button>
 
                         <button type="button" @click="setDuration('10plus_days', 10)"
@@ -642,7 +648,8 @@
                             class="flex flex-col rounded-sm border p-6 text-left transition-all">
                             <span class="text-xl font-bold text-[#211915] dark:text-white">10+ DAYS</span>
                             <span class="mt-1 text-xs font-semibold text-[#D96B27]">10 Days Itinerary</span>
-                            <span class="mt-2 text-xs text-[#6E635C] dark:text-[#FAF6F0]/70">Grand wildlife expedition across Kenya & Tanzania combined.</span>
+                            <span class="mt-2 text-xs text-[#6E635C] dark:text-[#FAF6F0]/70">Grand wildlife expedition
+                                across Kenya & Tanzania combined.</span>
                         </button>
                     </div>
                 </div>
@@ -653,18 +660,21 @@
                         <h2 class="text-2xl font-extrabold text-[#211915] sm:text-3xl dark:text-white">
                             When would you like to travel?
                         </h2>
-                        <span class="inline-flex items-center gap-1.5 rounded-full bg-[#D96B27]/10 px-3 py-1 text-xs font-bold text-[#D96B27]">
+                        <span
+                            class="inline-flex items-center gap-1.5 rounded-full bg-[#D96B27]/10 px-3 py-1 text-xs font-bold text-[#D96B27]">
                             <span class="size-2 rounded-full bg-[#D96B27]"></span>
                             <span>Selected Duration: <strong x-text="getDurationDays() + ' Days'"></strong></span>
                         </span>
                     </div>
                     <p class="mt-2 text-sm text-[#6E635C] dark:text-[#FAF6F0]/70">
-                        Wildlife sightings in East Africa are magnificent year-round. Select your target year and month, then choose your departure date to view your matching itinerary timeframe.
+                        Wildlife sightings in East Africa are magnificent year-round. Select your target year and month,
+                        then choose your departure date to view your matching itinerary timeframe.
                     </p>
 
                     <!-- 1. Year Selection -->
                     <div class="mt-8">
-                        <label class="text-xs font-bold uppercase tracking-wider text-[#6E635C] dark:text-[#FAF6F0]/60">
+                        <label
+                            class="text-xs font-bold uppercase tracking-wider text-[#6E635C] dark:text-[#FAF6F0]/60">
                             1. Select Travel Year
                         </label>
                         <div class="mt-3 flex flex-wrap gap-2.5">
@@ -682,16 +692,20 @@
 
                     <!-- 2. Month Selection -->
                     <div class="mt-8">
-                        <label class="text-xs font-bold uppercase tracking-wider text-[#6E635C] dark:text-[#FAF6F0]/60">
+                        <label
+                            class="text-xs font-bold uppercase tracking-wider text-[#6E635C] dark:text-[#FAF6F0]/60">
                             2. Select Month & Wildlife Season
                         </label>
                         <div class="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
                             <template x-for="m in monthsList" :key="m.index">
                                 <button type="button" @click="selectMonth(m)" :disabled="isPastMonth(m.index)"
                                     :class="{
-                                        'opacity-30 cursor-not-allowed bg-black/5 dark:bg-white/5 border-transparent text-[#6E635C]': isPastMonth(m.index),
-                                        'border-[#D96B27] ring-2 ring-[#D96B27]/30 bg-[#FAF6F0] dark:bg-[#180D08] text-[#D96B27] font-bold shadow-xs': month === m.name && !isPastMonth(m.index),
-                                        'border-black/10 bg-[#FAF6F0] text-[#211915] hover:border-[#D96B27]/40 dark:border-white/10 dark:bg-[#180D08] dark:text-white': month !== m.name && !isPastMonth(m.index)
+                                        'opacity-30 cursor-not-allowed bg-black/5 dark:bg-white/5 border-transparent text-[#6E635C]': isPastMonth(
+                                            m.index),
+                                        'border-[#D96B27] ring-2 ring-[#D96B27]/30 bg-[#FAF6F0] dark:bg-[#180D08] text-[#D96B27] font-bold shadow-xs': month ===
+                                            m.name && !isPastMonth(m.index),
+                                        'border-black/10 bg-[#FAF6F0] text-[#211915] hover:border-[#D96B27]/40 dark:border-white/10 dark:bg-[#180D08] dark:text-white': month !==
+                                            m.name && !isPastMonth(m.index)
                                     }"
                                     class="flex flex-col rounded-sm border p-2.5 text-left transition-all">
                                     <span class="text-sm font-bold" x-text="m.name"></span>
@@ -703,8 +717,10 @@
                     </div>
 
                     <!-- 3. Interactive Month Dates Grid (Calendar) -->
-                    <div class="mt-8 rounded-sm border border-black/10 bg-[#FAF6F0] p-4 sm:p-6 dark:border-white/10 dark:bg-[#180D08]">
-                        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-black/10 pb-4 dark:border-white/10">
+                    <div
+                        class="mt-8 rounded-sm border border-black/10 bg-[#FAF6F0] p-4 sm:p-6 dark:border-white/10 dark:bg-[#180D08]">
+                        <div
+                            class="flex flex-wrap items-center justify-between gap-3 border-b border-black/10 pb-4 dark:border-white/10">
                             <div>
                                 <label class="text-xs font-bold uppercase tracking-wider text-[#D96B27]">
                                     Select Travel Date
@@ -726,7 +742,8 @@
                         </div>
 
                         <!-- Days of week header -->
-                        <div class="mt-4 grid grid-cols-7 gap-1 text-center text-xs font-bold uppercase tracking-wider text-[#6E635C] dark:text-[#FAF6F0]/60">
+                        <div
+                            class="mt-4 grid grid-cols-7 gap-1 text-center text-xs font-bold uppercase tracking-wider text-[#6E635C] dark:text-[#FAF6F0]/60">
                             <span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span><span>Sun</span>
                         </div>
 
@@ -740,19 +757,26 @@
                                     <template x-if="!item.isBlank">
                                         <button type="button" @click="selectDay(item)" :disabled="item.disabled"
                                             :class="{
-                                                'opacity-35 cursor-not-allowed bg-black/5 dark:bg-white/5 text-[#6E635C]': item.disabled,
-                                                'bg-[#D96B27] text-white font-bold ring-2 ring-[#D96B27] shadow-sm z-10': item.isStart,
-                                                'bg-[#24140E] text-white font-bold ring-2 ring-[#24140E] shadow-sm z-10 dark:bg-white dark:text-[#24140E]': item.isEnd && !item.isStart,
-                                                'bg-[#D96B27]/20 text-[#211915] font-semibold dark:bg-[#D96B27]/30 dark:text-white': item.isInRange && !item.isStart && !item.isEnd,
-                                                'border border-black/10 bg-white text-[#211915] hover:border-[#D96B27] hover:bg-[#D96B27]/10 dark:border-white/10 dark:bg-[#24140E] dark:text-white': !item.disabled && !item.isInRange
+                                                'opacity-35 cursor-not-allowed bg-black/5 dark:bg-white/5 text-[#6E635C]': item
+                                                    .disabled,
+                                                'bg-[#D96B27] text-white font-bold ring-2 ring-[#D96B27] shadow-sm z-10': item
+                                                    .isStart,
+                                                'bg-[#24140E] text-white font-bold ring-2 ring-[#24140E] shadow-sm z-10 dark:bg-white dark:text-[#24140E]': item
+                                                    .isEnd && !item.isStart,
+                                                'bg-[#D96B27]/20 text-[#211915] font-semibold dark:bg-[#D96B27]/30 dark:text-white': item
+                                                    .isInRange && !item.isStart && !item.isEnd,
+                                                'border border-black/10 bg-white text-[#211915] hover:border-[#D96B27] hover:bg-[#D96B27]/10 dark:border-white/10 dark:bg-[#24140E] dark:text-white':
+                                                    !item.disabled && !item.isInRange
                                             }"
                                             class="group relative flex h-10 sm:h-12 w-full flex-col items-center justify-center rounded-sm text-xs transition-all">
                                             <span x-text="item.dayNumber" class="text-xs sm:text-sm"></span>
                                             <template x-if="item.isStart">
-                                                <span class="text-[8px] font-bold uppercase tracking-tighter sm:text-[9px]">Start</span>
+                                                <span
+                                                    class="text-[8px] font-bold uppercase tracking-tighter sm:text-[9px]">Start</span>
                                             </template>
                                             <template x-if="item.isEnd && !item.isStart">
-                                                <span class="text-[8px] font-bold uppercase tracking-tighter sm:text-[9px]">Return</span>
+                                                <span
+                                                    class="text-[8px] font-bold uppercase tracking-tighter sm:text-[9px]">Return</span>
                                             </template>
                                         </button>
                                     </template>
@@ -761,11 +785,14 @@
                         </div>
 
                         <!-- Dates summary & notice -->
-                        <div class="mt-6 flex flex-col gap-4 border-t border-black/10 pt-4 md:flex-row md:items-center md:justify-between dark:border-white/10">
+                        <div
+                            class="mt-6 flex flex-col gap-4 border-t border-black/10 pt-4 md:flex-row md:items-center md:justify-between dark:border-white/10">
                             <div class="space-y-1">
-                                <div class="flex flex-wrap items-center gap-2 text-xs font-semibold text-[#211915] dark:text-white">
+                                <div
+                                    class="flex flex-wrap items-center gap-2 text-xs font-semibold text-[#211915] dark:text-white">
                                     <span class="inline-flex items-center gap-1 text-[#D96B27]">
-                                        <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <svg class="size-4" fill="none" viewBox="0 0 24 24"
+                                            stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                         </svg>
@@ -774,7 +801,8 @@
                                     <strong x-text="formatDisplayDate(travelDate)"></strong>
                                     <span>&rarr;</span>
                                     <span class="text-[#D96B27]">Return:</span>
-                                    <strong x-text="formatDisplayDate(getEndDateStr()) + ' (' + getDurationDays() + ' Days)'"></strong>
+                                    <strong
+                                        x-text="formatDisplayDate(getEndDateStr()) + ' (' + getDurationDays() + ' Days)'"></strong>
                                 </div>
                                 <p class="text-xs text-[#6E635C] dark:text-[#FAF6F0]/70">
                                     <span class="font-bold text-[#D96B27]" x-text="month + ' ' + year + ': '"></span>
@@ -783,7 +811,8 @@
                             </div>
 
                             <p class="text-right text-[11px] text-[#6E635C] dark:text-[#FAF6F0]/60 md:max-w-xs">
-                                Dates within the next 10 days are unavailable. This gives us time to plan your safari properly.
+                                Dates within the next 10 days are unavailable. This gives us time to plan your safari
+                                properly.
                             </p>
                         </div>
                     </div>
@@ -862,7 +891,8 @@
                             class="flex items-center justify-between border-b border-black/10 pb-3 dark:border-white/10">
                             <div class="flex items-center gap-2">
                                 <span class="size-2 rounded-full bg-[#D96B27]"></span>
-                                <span class="text-xs font-bold uppercase tracking-wider text-[#D96B27]">Safari Plan Preview</span>
+                                <span
+                                    class="text-xs font-bold uppercase tracking-wider text-[#D96B27]">{{ 'Safari Plan Preview' }}</span>
                             </div>
                             <span class="text-[11px] text-[#6E635C] dark:text-[#FAF6F0]/60">Selected
                                 Specifications</span>
@@ -910,7 +940,8 @@
                                 class="rounded-sm border border-black/5 bg-white p-3 sm:col-span-2 dark:border-white/5 dark:bg-[#24140E]">
                                 <div class="flex items-center justify-between">
                                     <span
-                                        class="text-[10px] font-bold uppercase tracking-wider text-[#6E635C] dark:text-[#FAF6F0]/60">Travel Dates & Season</span>
+                                        class="text-[10px] font-bold uppercase tracking-wider text-[#6E635C] dark:text-[#FAF6F0]/60">Travel
+                                        Dates & Season</span>
                                     <button type="button" @click="step = 4"
                                         class="text-[11px] font-semibold text-[#D96B27] hover:underline">Edit</button>
                                 </div>

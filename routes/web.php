@@ -32,4 +32,26 @@ Route::get('/plan-your-trip', [TripPlannerController::class, 'create'])->name('p
 Route::post('/plan-your-trip', [TripPlannerController::class, 'store'])->name('plan.store');
 Route::get('/plan-your-trip/{token}', [TripPlannerController::class, 'show'])->name('plan.show');
 
-Route::view('/staff', 'auth.dashboard')->middleware('auth')->name('dashboard');
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\InquiryController as AdminInquiryController;
+use App\Http\Controllers\Admin\TourController as AdminTourController;
+
+Route::middleware(['auth', 'role'])->group(function () {
+    // Staff Dashboard
+    Route::get('/staff', DashboardController::class)->name('admin.dashboard');
+    Route::get('/dashboard', fn () => redirect()->route('admin.dashboard'))->name('dashboard');
+
+    // Safari Proposals / Inquiries Management (Sales & Admin)
+    Route::middleware(['role:sales,admin,super_admin'])->prefix('staff/inquiries')->name('admin.inquiries.')->group(function () {
+        Route::get('/', [AdminInquiryController::class, 'index'])->name('index');
+        Route::get('/{inquiry}', [AdminInquiryController::class, 'show'])->name('show');
+        Route::put('/{inquiry}', [AdminInquiryController::class, 'update'])->name('update');
+    });
+
+    // Tours & Packages Management (Editor & Admin)
+    Route::middleware(['role:editor,admin,super_admin'])->prefix('staff/tours')->name('admin.tours.')->group(function () {
+        Route::get('/', [AdminTourController::class, 'index'])->name('index');
+        Route::get('/{tour}/edit', [AdminTourController::class, 'edit'])->name('edit');
+        Route::put('/{tour}', [AdminTourController::class, 'update'])->name('update');
+    });
+});

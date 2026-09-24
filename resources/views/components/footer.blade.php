@@ -143,7 +143,7 @@
             <div class="flex items-center gap-6">
                 <a href="#top" class="hover:text-white">Back to top &uarr;</a>
                 <span>&bull;</span>
-                <a href="{{ route('dashboard') }}" class="hover:text-white">Staff Portal</a>
+                <a href="{{ route('admin.dashboard') }}" class="hover:text-white">Staff Portal</a>
             </div>
         </div>
     </div>
