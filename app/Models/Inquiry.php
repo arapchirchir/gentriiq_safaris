@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -148,7 +149,9 @@ class Inquiry extends Model
         }
         $text .= '- Trip Type: ' . $this->trip_type_label . "\n";
         $text .= '- Travelers: ' . $this->traveller_label . "\n";
-        $travelDate = $this->travel_date?->format('M d, Y') ?? "{$this->travel_month} {$this->travel_year}";
+        $travelDate = $this->travel_date
+            ? Carbon::parse((string) $this->travel_date)->format('M d, Y')
+            : "{$this->travel_month} {$this->travel_year}";
         $text .= "- Travel Date: {$travelDate}" . ($this->travel_season ? " ({$this->travel_season})" : '') . "\n";
         $text .= '- Duration: ' . $this->duration_label . "\n";
         $text .= '- Accommodation: ' . $this->accommodation_label . "\n";

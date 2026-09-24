@@ -31,6 +31,6 @@ test('homepage uses a clean document title without a trailing separator', functi
     $response = $this->get('/');
 
     $response->assertOk()
-        ->assertSee('<title>Authentic East African Safaris &amp; Tours | Gentriiq Safaris & Tours</title>', false)
-        ->assertDontSee('<title>Authentic East African Safaris &amp; Tours | Gentriiq Safaris & Tours |</title>', false);
+        ->assertSee('<title>Authentic East African Safaris &amp; Tours | Gentriiq Safaris &amp; Tours</title>', false)
+        ->assertDontSee('<title>Authentic East African Safaris &amp; Tours | Gentriiq Safaris &amp; Tours |</title>', false);
 });
