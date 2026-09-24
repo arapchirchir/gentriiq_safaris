@@ -1,0 +1,172 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Str;
+
+class Inquiry extends Model
+{
+    use HasFactory;
+
+    protected $fillable = [
+        'reference',
+        'token',
+        'tour_id',
+        'destination_id',
+        'trip_type',
+        'traveller_type',
+        'adults_count',
+        'children_count',
+        'travel_year',
+        'travel_month',
+        'travel_date',
+        'travel_season',
+        'duration',
+        'accommodation_tier',
+        'budget_range',
+        'name',
+        'email',
+        'phone',
+        'whatsapp',
+        'country',
+        'special_requests',
+        'status',
+        'ip_address',
+        'user_agent',
+    ];
+
+    protected function casts(): array
+    {
+        return [
+            'adults_count' => 'integer',
+            'children_count' => 'integer',
+            'travel_date' => 'date',
+        ];
+    }
+
+    public function tour(): BelongsTo
+    {
+        return $this->belongsTo(Tour::class);
+    }
+
+    public function destination(): BelongsTo
+    {
+        return $this->belongsTo(Destination::class);
+    }
+
+    protected static function booted(): void
+    {
+        static::creating(function (Inquiry $inquiry) {
+            if (empty($inquiry->token)) {
+                $inquiry->token = (string) Str::uuid();
+            }
+            if (empty($inquiry->reference)) {
+                $inquiry->reference = 'GS-' . strtoupper(Str::random(6));
+            }
+        });
+    }
+
+    public function getTripTypeLabelAttribute(): string
+    {
+        $types = is_array($this->trip_type)
+            ? $this->trip_type
+            : (str_contains($this->trip_type ?? '', ',')
+                ? explode(',', $this->trip_type)
+                : (array) ($this->trip_type ? [$this->trip_type] : []));
+
+        $labels = array_map(function ($type) {
+            return match (trim($type)) {
+                'safari' => 'Wildlife Safari',
+                'mountain_trek' => 'Mountain Trek',
+                'beach_holiday' => 'Beach Holiday',
+                'bush_beach_combined' => 'Bush to Beach',
+                default => ucfirst(str_replace('_', ' ', trim($type))),
+            };
+        }, $types);
+
+        return ! empty($labels) ? implode(' + ', $labels) : 'Custom Safari';
+    }
+
+    public function getTravellerLabelAttribute(): string
+    {
+        $base = match ($this->traveller_type) {
+            'solo' => 'Solo Traveler',
+            'partner' => 'Couple / Partner',
+            'family' => 'Family Holiday',
+            'group' => 'Private Group of Friends',
+            default => ucfirst($this->traveller_type),
+        };
+
+        $counts = "{$this->adults_count} " . Str::plural('Adult', $this->adults_count);
+        if ($this->children_count > 0) {
+            $counts .= ", {$this->children_count} " . Str::plural('Child', $this->children_count);
+        }
+
+        return "{$base} ({$counts})";
+    }
+
+    public function getDurationLabelAttribute(): string
+    {
+        return match ($this->duration) {
+            '2-3_days' => '2 to 3 Days (Short Safari Getaway)',
+            '4-6_days' => '4 to 6 Days (East Africa Highlights)',
+            '7-9_days' => '7 to 9 Days (Classic Safari Experience)',
+            '10plus_days' => '10+ Days (Grand Wildlife Expedition)',
+            default => $this->duration,
+        };
+    }
+
+    public function getAccommodationLabelAttribute(): string
+    {
+        return match ($this->accommodation_tier) {
+            'comfort' => 'Comfort / Mid-range Lodges & Tented Camps',
+            'luxury' => 'Luxury Safari Lodges & Camps',
+            'signature_luxury' => 'Ultra-Luxury / Exclusive Boutique Camps',
+            default => 'Not specified / Flexible',
+        };
+    }
+
+    public function getShareUrlAttribute(): string
+    {
+        return route('plan.show', ['token' => $this->token]);
+    }
+
+    public function getWhatsAppMessageAttribute(): string
+    {
+        $text = "Hello Gentriiq Safaris & Tours!\n";
+        $text .= "I have customized a safari plan on your website.\n\n";
+        $text .= "Booking Ref: {$this->reference}\n";
+        $text .= 'View Full Plan: ' . $this->share_url . "\n\n";
+        if ($this->tour) {
+            $text .= "- Package: {$this->tour->title}\n";
+        }
+        if ($this->destination) {
+            $text .= "- Destination: {$this->destination->name}\n";
+        }
+        $text .= '- Trip Type: ' . $this->trip_type_label . "\n";
+        $text .= '- Travelers: ' . $this->traveller_label . "\n";
+        $travelDate = $this->travel_date?->format('M d, Y') ?? "{$this->travel_month} {$this->travel_year}";
+        $text .= "- Travel Date: {$travelDate}" . ($this->travel_season ? " ({$this->travel_season})" : '') . "\n";
+        $text .= '- Duration: ' . $this->duration_label . "\n";
+        $text .= '- Accommodation: ' . $this->accommodation_label . "\n";
+        $text .= "- Lead Guest: {$this->name}" . ($this->country ? " ({$this->country})" : '') . "\n";
+        $text .= "- Email: {$this->email}\n";
+        if ($this->whatsapp || $this->phone) {
+            $text .= '- Phone: ' . ($this->whatsapp ?: $this->phone) . "\n";
+        }
+        if ($this->special_requests) {
+            $text .= '- Safari Wishlist: ' . Str::limit($this->special_requests, 100) . "\n";
+        }
+        $text .= "\nPlease share a personalized itinerary and quote. Thank you!";
+
+        return $text;
+    }
+
+    public function getWhatsAppUrlAttribute(): string
+    {
+        return 'https://wa.me/254717838061?text=' . urlencode($this->whatsapp_message);
+    }
+}
