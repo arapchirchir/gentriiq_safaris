@@ -103,6 +103,12 @@ test('sales specialist can update inquiry status and internal notes', function (
         'status' => 'new',
     ]);
 
+    $this->actingAs($salesUser)
+        ->get(route('admin.inquiries.show', $inquiry))
+        ->assertOk()
+        ->assertSee('Jane Smith')
+        ->assertSee('Dossier');
+
     $response = $this->actingAs($salesUser)
         ->put(route('admin.inquiries.update', $inquiry), [
             'status' => 'contacted',
@@ -134,6 +140,12 @@ test('editor can update tour details and published status', function () {
         'tour_type' => 'private',
         'status' => 'draft',
     ]);
+
+    $this->actingAs($editor)
+        ->get(route('admin.tours.edit', $tour))
+        ->assertOk()
+        ->assertSee('Edit Safari Package')
+        ->assertSee('Test Safari Expedition');
 
     $response = $this->actingAs($editor)
         ->put(route('admin.tours.update', $tour), [

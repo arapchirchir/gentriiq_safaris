@@ -17,16 +17,19 @@ composer install --no-dev --prefer-dist --optimize-autoloader
 echo "3. Running migrations..."
 php artisan migrate --force
 
-echo "4. Clearing old caches..."
+echo "4. Running seeders..."
+# php artisan db:seed --force
+
+echo "5. Clearing old caches..."
 php artisan optimize:clear
 
-echo "5. Caching configuration..."
+echo "6. Caching configuration..."
 php artisan config:cache
 
-echo "6. Caching routes..."
+echo "7. Caching routes..."
 php artisan route:cache
 
-echo "7. Caching views..."
+echo "8. Caching views..."
 php artisan view:cache
 
 echo "Deployment finished successfully."

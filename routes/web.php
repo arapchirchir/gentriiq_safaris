@@ -29,8 +29,8 @@ Route::get('/', function () {
 Route::get('/tours/{tour:slug}', [TourController::class, 'show'])->name('tours.show');
 Route::get('/destinations/{destination:slug}', [DestinationController::class, 'show'])->name('destinations.show');
 Route::get('/plan-your-trip', [TripPlannerController::class, 'create'])->name('plan.create');
-Route::post('/plan-your-trip', [TripPlannerController::class, 'store'])->name('plan.store');
-Route::get('/plan-your-trip/{token}', [TripPlannerController::class, 'show'])->name('plan.show');
+Route::post('/plan-your-trip', [TripPlannerController::class, 'store'])->middleware('throttle:5,1')->name('plan.store');
+Route::get('/plan-your-trip/{token}', [TripPlannerController::class, 'show'])->middleware('throttle:30,1')->name('plan.show');
 
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\InquiryController as AdminInquiryController;

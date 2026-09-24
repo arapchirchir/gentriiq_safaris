@@ -34,11 +34,12 @@ class Inquiry extends Model
         'whatsapp',
         'country',
         'special_requests',
-        'internal_notes',
         'status',
         'ip_address',
         'user_agent',
     ];
+
+    // internal_notes is intentionally absent from $fillable — only assigned explicitly in staff controllers.
 
     protected function casts(): array
     {

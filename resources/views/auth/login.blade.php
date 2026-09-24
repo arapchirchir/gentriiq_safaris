@@ -25,4 +25,8 @@
             <span x-cloak x-show="submitting" role="status">Signing in…</span>
         </button>
     </form>
+
+    <p class="text-center text-sm text-[#6E635C] dark:text-white/60">
+        <a href="{{ route('password.request') }}" class="underline underline-offset-4 hover:text-[#D96B27]">Forgot your password?</a>
+    </p>
 </x-layouts.auth>

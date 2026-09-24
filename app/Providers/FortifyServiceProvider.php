@@ -16,6 +16,8 @@ class FortifyServiceProvider extends ServiceProvider
     {
         Fortify::loginView(fn (): View => view('auth.login'));
         Fortify::confirmPasswordView(fn (): View => view('auth.confirm-password'));
+        Fortify::requestPasswordResetLinkView(fn (): View => view('auth.forgot-password'));
+        Fortify::resetPasswordView(fn (Request $request): View => view('auth.reset-password', ['request' => $request]));
 
         RateLimiter::for('login', function (Request $request): Limit {
             return Limit::perMinute(5)->by(Str::transliterate(

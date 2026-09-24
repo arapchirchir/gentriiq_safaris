@@ -4,46 +4,41 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class AdminUserSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-        // Super Administrator
-        User::updateOrCreate(
-            ['email' => 'admin@gentriiqsafaris.co.ke'],
-            [
-                'name' => 'Gentriiq Admin',
-                'password' => Hash::make('password'),
-                'role' => User::ROLE_SUPER_ADMIN,
-                'is_active' => true,
-                'email_verified_at' => now(),
-            ]
+        // Each account is only created if it doesn't already exist.
+        // A random password is set so staff must use "Forgot password" to gain access.
+        $this->provision(
+            email: env('SEED_ADMIN_EMAIL', 'admin@gentriiqsafaris.co.ke'),
+            name: 'Gentriiq Admin',
+            role: User::ROLE_SUPER_ADMIN,
         );
 
-        // Safari Sales & Inquiries Specialist
-        User::updateOrCreate(
-            ['email' => 'sales@gentriiqsafaris.co.ke'],
-            [
-                'name' => 'Safari Sales Specialist',
-                'password' => Hash::make('password'),
-                'role' => User::ROLE_SALES,
-                'is_active' => true,
-                'email_verified_at' => now(),
-            ]
+        $this->provision(
+            email: env('SEED_SALES_EMAIL', 'sales@gentriiqsafaris.co.ke'),
+            name: 'Safari Sales Specialist',
+            role: User::ROLE_SALES,
         );
 
-        // Content & Tours Editor
-        User::updateOrCreate(
-            ['email' => 'editor@gentriiqsafaris.co.ke'],
+        $this->provision(
+            email: env('SEED_EDITOR_EMAIL', 'editor@gentriiqsafaris.co.ke'),
+            name: 'Safari Content Editor',
+            role: User::ROLE_EDITOR,
+        );
+    }
+
+    private function provision(string $email, string $name, string $role): void
+    {
+        User::firstOrCreate(
+            ['email' => $email],
             [
-                'name' => 'Safari Content Editor',
-                'password' => Hash::make('password'),
-                'role' => User::ROLE_EDITOR,
+                'name' => $name,
+                'password' => bcrypt(Str::password(24)),
+                'role' => $role,
                 'is_active' => true,
                 'email_verified_at' => now(),
             ]

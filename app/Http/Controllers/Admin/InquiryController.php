@@ -54,11 +54,13 @@ class InquiryController extends Controller
     public function update(Request $request, Inquiry $inquiry): RedirectResponse
     {
         $validated = $request->validate([
-            'status' => ['required', 'string', 'in:new,contacted,quote_sent,confirmed,cancelled'],
+            'status'         => ['required', 'string', 'in:new,contacted,quote_sent,confirmed,cancelled'],
             'internal_notes' => ['nullable', 'string', 'max:10000'],
         ]);
 
-        $inquiry->update($validated);
+        $inquiry->status = $validated['status'];
+        $inquiry->internal_notes = $validated['internal_notes'] ?? null;
+        $inquiry->save();
 
         return back()->with('success', "Inquiry {$inquiry->reference} status updated successfully.");
     }
