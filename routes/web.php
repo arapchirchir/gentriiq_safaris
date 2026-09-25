@@ -35,6 +35,7 @@ Route::get('/plan-your-trip/{token}', [TripPlannerController::class, 'show'])->m
 
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\DestinationController as AdminDestinationController;
+use App\Http\Controllers\Admin\ExperienceController as AdminExperienceController;
 use App\Http\Controllers\Admin\InquiryController as AdminInquiryController;
 use App\Http\Controllers\Admin\TourController as AdminTourController;
 
@@ -68,5 +69,15 @@ Route::middleware(['auth', 'role'])->group(function () {
         Route::get('/{destination}/edit', [AdminDestinationController::class, 'edit'])->name('edit');
         Route::put('/{destination}', [AdminDestinationController::class, 'update'])->name('update');
         Route::delete('/{destination}', [AdminDestinationController::class, 'destroy'])->name('destroy');
+    });
+
+    // Experiences Management (Editor & Admin) — drives the homepage and the trip planner
+    Route::middleware(['role:editor,admin,super_admin'])->prefix('staff/experiences')->name('admin.experiences.')->group(function () {
+        Route::get('/', [AdminExperienceController::class, 'index'])->name('index');
+        Route::get('/create', [AdminExperienceController::class, 'create'])->name('create');
+        Route::post('/', [AdminExperienceController::class, 'store'])->name('store');
+        Route::get('/{experience}/edit', [AdminExperienceController::class, 'edit'])->name('edit');
+        Route::put('/{experience}', [AdminExperienceController::class, 'update'])->name('update');
+        Route::delete('/{experience}', [AdminExperienceController::class, 'destroy'])->name('destroy');
     });
 });

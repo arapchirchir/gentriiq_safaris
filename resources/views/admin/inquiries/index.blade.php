@@ -96,7 +96,7 @@
                                     @endif
                                 </td>
                                 <td class="py-3.5 px-4">
-                                    <div class="font-semibold">{{ $inquiry->trip_type_label }}</div>
+                                    <div class="font-semibold">{{ $inquiry->experiences_label }}</div>
                                     @if ($inquiry->tour)
                                         <div class="text-[10px] text-[#D96B27] font-bold">{{ $inquiry->tour->title }}</div>
                                     @endif

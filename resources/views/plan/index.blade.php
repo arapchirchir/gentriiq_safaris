@@ -31,7 +31,8 @@
     <div class="bg-[#FAF6F0] py-12 dark:bg-[#180D08] sm:py-16" x-data="{
         step: 1,
         totalSteps: 6,
-        tripTypes: ['safari'],
+        experienceIds: @js($selectedExperienceIds),
+        experienceNames: @js($experiences->pluck('name', 'id')),
         travellerType: 'partner',
         adults: 2,
         children: 0,
@@ -45,7 +46,8 @@
         durationDays: 7,
         travelDate: '{{ $minimumTravelDate }}',
         accommodation: 'luxury',
-        budget: 'standard',
+        budget: '',
+        budgetLabels: @js(\App\Models\Inquiry::BUDGET_RANGES),
         name: '',
         email: '',
         phone: '',
@@ -185,28 +187,24 @@
             return days;
         },
     
-        toggleTripType(type) {
-            if (this.tripTypes.includes(type)) {
-                if (this.tripTypes.length > 1) {
-                    this.tripTypes = this.tripTypes.filter(t => t !== type);
-                }
+        toggleExperience(id) {
+            if (this.experienceIds.includes(id)) {
+                this.experienceIds = this.experienceIds.filter(e => e !== id);
             } else {
-                this.tripTypes.push(type);
+                this.experienceIds.push(id);
             }
         },
     
-        isTripTypeSelected(type) {
-            return this.tripTypes.includes(type);
+        isExperienceSelected(id) {
+            return this.experienceIds.includes(id);
         },
     
-        getTripTypeLabel() {
-            const labels = {
-                'safari': 'Wildlife Safari',
-                'mountain_trek': 'Mountain Trek',
-                'beach_holiday': 'Beach Holiday',
-                'bush_beach_combined': 'Bush to Beach'
-            };
-            return this.tripTypes.map(t => labels[t] || t).join(' + ');
+        getExperienceLabel() {
+            return this.experienceIds.map(id => this.experienceNames[id]).filter(Boolean).join(' + ');
+        },
+    
+        getBudgetLabel() {
+            return this.budget ? `${this.budgetLabels[this.budget]} per person` : 'Not specified';
         },
     
         getTravellerLabel() {
@@ -241,7 +239,7 @@
         },
     
         canProceed() {
-            if (this.step === 1) return this.tripTypes.length >= 1;
+            if (this.step === 1) return this.experienceIds.length >= 1;
             if (this.step === 2) return !!this.travellerType && this.adults >= 1;
             if (this.step === 3) return !!this.duration;
             if (this.step === 4) return !!this.travelDate;
@@ -274,7 +272,7 @@
                 </div>
                 <div
                     class="mt-4 flex items-center justify-between text-xs font-medium text-[#6E635C] dark:text-[#FAF6F0]/70">
-                    <span x-text="`Step ${step} out of ${totalSteps}`"></span>
+                    <span x-text="`Step ${step} out of ${totalSteps}`">Step 1 out of 6</span>
                     <span class="inline-flex items-center gap-1.5">
                         <svg class="size-3.5 text-[#D96B27]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -286,21 +284,19 @@
 
                 <!-- Progress Track -->
                 <div class="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-black/10 dark:bg-white/10">
-                    <div class="h-full bg-[#D96B27] transition-all duration-300"
+                    <div class="h-full bg-[#D96B27] transition-all duration-300" style="width: 16.6667%"
                         :style="`width: ${(step / totalSteps) * 100}%`"></div>
                 </div>
             </div>
 
             <!-- Form Container -->
-            <form method="POST" action="{{ route('plan.store') }}"
-                class="mt-8 rounded-sm border border-black/10 bg-white p-6 shadow-sm sm:p-10 dark:border-white/10 dark:bg-[#24140E]">
+            <form method="POST" action="{{ route('plan.store') }}" class="mt-8">
                 @csrf
 
                 <!-- Hidden inputs synchronized with Alpine state -->
-                <template x-for="t in tripTypes" :key="t">
-                    <input type="hidden" name="trip_types[]" :value="t">
+                <template x-for="id in experienceIds" :key="id">
+                    <input type="hidden" name="experiences[]" :value="id">
                 </template>
-                <input type="hidden" name="trip_type" :value="tripTypes.join(',')">
                 @if ($tour)
                     <input type="hidden" name="tour_id" value="{{ $tour->id }}">
                 @endif
@@ -316,147 +312,80 @@
                 <input type="hidden" name="travel_season" :value="season">
                 <input type="hidden" name="duration" :value="duration">
                 <input type="hidden" name="accommodation_tier" :value="accommodation">
+                <input type="hidden" name="budget_range" :value="budget">
+
+                @if ($tour || $destination)
+                    <div class="mb-8 rounded-sm border border-[#D96B27]/20 bg-[#D96B27]/10 p-4 text-center">
+                        <p class="text-xs font-bold uppercase tracking-wider text-[#D96B27]">Your inquiry is about</p>
+                        <p class="mt-1 font-semibold text-[#211915] dark:text-white">
+                            @if ($tour)
+                                {{ $tour->title }}
+                            @endif
+                            @if ($tour && $destination)
+                                <span class="mx-1 text-[#D96B27]">&bull;</span>
+                            @endif
+                            @if ($destination)
+                                {{ $destination->name }}
+                            @endif
+                        </p>
+                    </div>
+                @endif
 
                 <!-- STEP 1: What kind of trip are you dreaming of? -->
                 <div x-show="step === 1" x-transition.opacity>
-                    <div class="flex flex-wrap items-baseline justify-between gap-2">
-                        <h2 class="text-2xl font-extrabold text-[#211915] sm:text-3xl dark:text-white">
-                            What kind of trip are you dreaming of?
-                        </h2>
-                        <span class="rounded-full hidden bg-[#D96B27]/10 px-3 py-1 text-xs font-bold text-[#D96B27]">
-                            Multi-select enabled
-                        </span>
-                    </div>
+                    <h2 class="text-2xl font-extrabold text-[#211915] sm:text-3xl dark:text-white">
+                        What kind of trip are you dreaming of?
+                    </h2>
                     <p class="mt-2 text-sm text-[#6E635C] dark:text-[#FAF6F0]/70">
-                        Choose one or more adventure experiences. You can combine multiple items into a single bespoke
-                        itinerary.
+                        Choose one or more experiences. You can combine several into a single bespoke itinerary.
                     </p>
 
                     <div class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                        <!-- Option 1: Safari -->
-                        <button type="button" @click="toggleTripType('safari')"
-                            :class="isTripTypeSelected('safari') ?
-                                'border-[#D96B27] ring-2 ring-[#D96B27]/30 shadow-md bg-[#FAF6F0] dark:bg-[#180D08]' :
-                                'border-black/10 dark:border-white/10 opacity-75 hover:opacity-100 bg-[#FAF6F0] dark:bg-[#180D08]'"
-                            class="group relative flex flex-col overflow-hidden rounded-sm border p-4 text-left transition-all duration-200">
-                            <!-- Check indicator -->
-                            <div x-show="isTripTypeSelected('safari')"
-                                class="absolute top-3 right-3 z-10 flex size-6 items-center justify-center rounded-full bg-[#D96B27] text-white shadow-xs">
-                                <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                                        d="M5 13l4 4L19 7" />
-                                </svg>
-                            </div>
-                            <div x-show="!isTripTypeSelected('safari')"
-                                class="absolute top-3 right-3 z-10 size-5 rounded-full border border-black/20 bg-white/80 dark:border-white/20 dark:bg-black/40">
-                            </div>
+                        @forelse ($experiences as $experience)
+                            <button type="button" @click="toggleExperience({{ $experience->id }})"
+                                :aria-pressed="isExperienceSelected({{ $experience->id }})"
+                                :data-selected="isExperienceSelected({{ $experience->id }})"
+                                @if (in_array($experience->id, $selectedExperienceIds, true)) data-selected="true" @endif
+                                class="group relative flex flex-col overflow-hidden rounded-sm border p-2 text-left transition-all duration-200 border-black/10 dark:border-white/10 opacity-75 hover:opacity-100 bg-[#FAF6F0] dark:bg-[#180D08] data-selected:opacity-100 data-selected:border-[#D96B27] data-selected:ring-2 data-selected:ring-[#D96B27]/30 data-selected:shadow-md data-selected:bg-[#FAF6F0] data-selected:dark:bg-[#180D08]">
+                                <!-- Check indicator -->
+                                <div
+                                    class="absolute top-3 right-3 z-10 hidden size-6 items-center justify-center rounded-full bg-[#D96B27] text-white shadow-xs group-data-selected:flex">
+                                    <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+                                        aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                            d="M5 13l4 4L19 7" />
+                                    </svg>
+                                </div>
+                                <div
+                                    class="absolute top-3 right-3 z-10 size-5 rounded-full border border-black/20 bg-white/80 group-data-selected:hidden dark:border-white/20 dark:bg-black/40">
+                                </div>
 
-                            <div class="aspect-4/3 w-full overflow-hidden rounded-sm bg-black/10">
-                                <img src="https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&w=600&q=80"
-                                    alt="Wildlife Safari"
-                                    class="size-full object-cover transition-transform duration-300 group-hover:scale-105">
-                            </div>
-                            <span
-                                class="mt-4 text-sm font-bold uppercase tracking-wider text-[#211915] dark:text-white">Wildlife
-                                Safari</span>
-                            <span class="mt-1 text-xs text-[#6E635C] dark:text-[#FAF6F0]/70">Big Five game viewing in
-                                Maasai Mara, Amboseli & Serengeti.</span>
-                        </button>
-
-                        <!-- Option 2: Mountain Trek -->
-                        <button type="button" @click="toggleTripType('mountain_trek')"
-                            :class="isTripTypeSelected('mountain_trek') ?
-                                'border-[#D96B27] ring-2 ring-[#D96B27]/30 shadow-md bg-[#FAF6F0] dark:bg-[#180D08]' :
-                                'border-black/10 dark:border-white/10 opacity-75 hover:opacity-100 bg-[#FAF6F0] dark:bg-[#180D08]'"
-                            class="group relative flex flex-col overflow-hidden rounded-sm border p-4 text-left transition-all duration-200">
-                            <!-- Check indicator -->
-                            <div x-show="isTripTypeSelected('mountain_trek')"
-                                class="absolute top-3 right-3 z-10 flex size-6 items-center justify-center rounded-full bg-[#D96B27] text-white shadow-xs">
-                                <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                                        d="M5 13l4 4L19 7" />
-                                </svg>
-                            </div>
-                            <div x-show="!isTripTypeSelected('mountain_trek')"
-                                class="absolute top-3 right-3 z-10 size-5 rounded-full border border-black/20 bg-white/80 dark:border-white/20 dark:bg-black/40">
-                            </div>
-
-                            <div class="aspect-4/3 w-full overflow-hidden rounded-sm bg-black/10">
-                                <img src="https://images.unsplash.com/photo-1557050543-4d5f4e07ef46?auto=format&fit=crop&w=600&q=80"
-                                    alt="Mountain Trek"
-                                    class="size-full object-cover transition-transform duration-300 group-hover:scale-105">
-                            </div>
-                            <span
-                                class="mt-4 text-sm font-bold uppercase tracking-wider text-[#211915] dark:text-white">Mountain
-                                Trek</span>
-                            <span class="mt-1 text-xs text-[#6E635C] dark:text-[#FAF6F0]/70">Kilimanjaro and Mount Kenya
-                                climbing expeditions.</span>
-                        </button>
-
-                        <!-- Option 3: Beach Holiday -->
-                        <button type="button" @click="toggleTripType('beach_holiday')"
-                            :class="isTripTypeSelected('beach_holiday') ?
-                                'border-[#D96B27] ring-2 ring-[#D96B27]/30 shadow-md bg-[#FAF6F0] dark:bg-[#180D08]' :
-                                'border-black/10 dark:border-white/10 opacity-75 hover:opacity-100 bg-[#FAF6F0] dark:bg-[#180D08]'"
-                            class="group relative flex flex-col overflow-hidden rounded-sm border p-4 text-left transition-all duration-200">
-                            <!-- Check indicator -->
-                            <div x-show="isTripTypeSelected('beach_holiday')"
-                                class="absolute top-3 right-3 z-10 flex size-6 items-center justify-center rounded-full bg-[#D96B27] text-white shadow-xs">
-                                <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                                        d="M5 13l4 4L19 7" />
-                                </svg>
-                            </div>
-                            <div x-show="!isTripTypeSelected('beach_holiday')"
-                                class="absolute top-3 right-3 z-10 size-5 rounded-full border border-black/20 bg-white/80 dark:border-white/20 dark:bg-black/40">
-                            </div>
-
-                            <div class="aspect-4/3 w-full overflow-hidden rounded-sm bg-black/10">
-                                <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80"
-                                    alt="Beach Holiday"
-                                    class="size-full object-cover transition-transform duration-300 group-hover:scale-105">
-                            </div>
-                            <span
-                                class="mt-4 text-sm font-bold uppercase tracking-wider text-[#211915] dark:text-white">Beach
-                                Holiday</span>
-                            <span class="mt-1 text-xs text-[#6E635C] dark:text-[#FAF6F0]/70">Pristine white sand
-                                relaxation in Diani Beach & Zanzibar.</span>
-                        </button>
-
-                        <!-- Option 4: Bush & Beach -->
-                        <button type="button" @click="toggleTripType('bush_beach_combined')"
-                            :class="isTripTypeSelected('bush_beach_combined') ?
-                                'border-[#D96B27] ring-2 ring-[#D96B27]/30 shadow-md bg-[#FAF6F0] dark:bg-[#180D08]' :
-                                'border-black/10 dark:border-white/10 opacity-75 hover:opacity-100 bg-[#FAF6F0] dark:bg-[#180D08]'"
-                            class="group relative flex flex-col overflow-hidden rounded-sm border p-4 text-left transition-all duration-200">
-                            <!-- Check indicator -->
-                            <div x-show="isTripTypeSelected('bush_beach_combined')"
-                                class="absolute top-3 right-3 z-10 flex size-6 items-center justify-center rounded-full bg-[#D96B27] text-white shadow-xs">
-                                <svg class="size-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                                        d="M5 13l4 4L19 7" />
-                                </svg>
-                            </div>
-                            <div x-show="!isTripTypeSelected('bush_beach_combined')"
-                                class="absolute top-3 right-3 z-10 size-5 rounded-full border border-black/20 bg-white/80 dark:border-white/20 dark:bg-black/40">
-                            </div>
-
-                            <div class="aspect-4/3 w-full overflow-hidden rounded-sm bg-black/10">
-                                <img src="https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?auto=format&fit=crop&w=600&q=80"
-                                    alt="Bush to Beach"
-                                    class="size-full object-cover transition-transform duration-300 group-hover:scale-105">
-                            </div>
-                            <span
-                                class="mt-4 text-sm font-bold uppercase tracking-wider text-[#211915] dark:text-white">Bush
-                                & Beach</span>
-                            <span class="mt-1 text-xs text-[#6E635C] dark:text-[#FAF6F0]/70">The ultimate combination:
-                                Savannah game drives followed by the coast.</span>
-                        </button>
+                                <div class="aspect-4/3 w-full overflow-hidden rounded-sm bg-black/10">
+                                    @if ($experience->image)
+                                        <img src="{{ $experience->image }}" alt="{{ $experience->name }}"
+                                            loading="{{ $loop->index < 4 ? 'eager' : 'lazy' }}"
+                                            class="size-full object-cover transition-transform duration-300 group-hover:scale-105">
+                                    @endif
+                                </div>
+                                <span
+                                    class="mt-4 text-sm font-bold uppercase tracking-wider text-[#211915] dark:text-white">
+                                    {{ $experience->name }}</span>
+                                @if ($experience->summary)
+                                    <span
+                                        class="mt-1 text-xs text-[#6E635C] line-clamp-2 dark:text-[#FAF6F0]/70">{{ $experience->summary }}</span>
+                                @endif
+                            </button>
+                        @empty
+                            <p class="col-span-full text-sm text-[#6E635C] dark:text-[#FAF6F0]/70">
+                                Our planner is being updated. Please contact us on WhatsApp and we will plan your trip
+                                directly.
+                            </p>
+                        @endforelse
                     </div>
                 </div>
 
                 <!-- STEP 2: Who will you be traveling with? -->
-                <div x-show="step === 2" x-transition.opacity>
+                <div x-show="step === 2" x-cloak x-transition.opacity>
                     <h2 class="text-2xl font-extrabold text-[#211915] sm:text-3xl dark:text-white">
                         Who will you be traveling with?
                     </h2>
@@ -464,69 +393,36 @@
                         Safari vehicles and lodge configurations are tailored to your travel party.
                     </p>
 
-                    <div class="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
+                    <div class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                         <button type="button" @click="travellerType = 'solo'; adults = 1; children = 0"
-                            :class="travellerType === 'solo' ?
-                                'border-[#D96B27] bg-[#FAF6F0] dark:bg-[#180D08] text-[#D96B27] ring-2 ring-[#D96B27]/20' :
-                                'border-black/10 bg-transparent text-[#211915] dark:border-white/10 dark:text-white'"
-                            class="flex flex-col items-center justify-center rounded-sm border p-6 text-center transition-all">
-                            <span
-                                class="flex size-12 items-center justify-center rounded-full bg-[#D96B27]/10 text-[#D96B27]">
-                                <svg class="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                </svg>
-                            </span>
-                            <span class="mt-3 text-sm font-bold uppercase">Solo</span>
-                            <span class="mt-1 text-xs text-[#6E635C] dark:text-[#FAF6F0]/60">Independent</span>
+                            :aria-pressed="travellerType === 'solo'" :data-selected="travellerType === 'solo'"
+                            class="flex flex-col rounded-sm border p-6 text-left transition-all border-black/10 bg-transparent dark:border-white/10 data-selected:border-[#D96B27] data-selected:bg-[#FAF6F0] data-selected:ring-2 data-selected:ring-[#D96B27]/20 data-selected:dark:bg-[#180D08]">
+                            <span class="text-lg font-bold text-[#211915] dark:text-white">Solo</span>
+                            <span class="mt-2 text-xs leading-relaxed text-[#6E635C] dark:text-[#FAF6F0]/70">Just me,
+                                travelling at my own pace.</span>
                         </button>
-
-                        <button type="button" @click="travellerType = 'partner'; adults = 2"
-                            :class="travellerType === 'partner' ?
-                                'border-[#D96B27] bg-[#FAF6F0] dark:bg-[#180D08] text-[#D96B27] ring-2 ring-[#D96B27]/20' :
-                                'border-black/10 bg-transparent text-[#211915] dark:border-white/10 dark:text-white'"
-                            class="flex flex-col items-center justify-center rounded-sm border p-6 text-center transition-all">
-                            <span
-                                class="flex size-12 items-center justify-center rounded-full bg-[#D96B27]/10 text-[#D96B27]">
-                                <svg class="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                                </svg>
-                            </span>
-                            <span class="mt-3 text-sm font-bold uppercase">Partner</span>
-                            <span class="mt-1 text-xs text-[#6E635C] dark:text-[#FAF6F0]/60">Couple / Honeymoon</span>
+                        <button type="button" @click="travellerType = 'partner'; adults = 2; children = 0"
+                            :aria-pressed="travellerType === 'partner'" :data-selected="travellerType === 'partner'"
+                            class="flex flex-col rounded-sm border p-6 text-left transition-all border-black/10 bg-transparent dark:border-white/10 data-selected:border-[#D96B27] data-selected:bg-[#FAF6F0] data-selected:ring-2 data-selected:ring-[#D96B27]/20 data-selected:dark:bg-[#180D08]">
+                            <span class="text-lg font-bold text-[#211915] dark:text-white">With Partner</span>
+                            <span class="mt-2 text-xs leading-relaxed text-[#6E635C] dark:text-[#FAF6F0]/70">Couples,
+                                honeymoons and anniversaries.</span>
                         </button>
-
                         <button type="button" @click="travellerType = 'family'; adults = 2; children = 1"
-                            :class="travellerType === 'family' ?
-                                'border-[#D96B27] bg-[#FAF6F0] dark:bg-[#180D08] text-[#D96B27] ring-2 ring-[#D96B27]/20' :
-                                'border-black/10 bg-transparent text-[#211915] dark:border-white/10 dark:text-white'"
-                            class="flex flex-col items-center justify-center rounded-sm border p-6 text-center transition-all">
-                            <span
-                                class="flex size-12 items-center justify-center rounded-full bg-[#D96B27]/10 text-[#D96B27]">
-                                <svg class="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-                                </svg>
-                            </span>
-                            <span class="mt-3 text-sm font-bold uppercase">Family</span>
-                            <span class="mt-1 text-xs text-[#6E635C] dark:text-[#FAF6F0]/60">With Children</span>
+                            :aria-pressed="travellerType === 'family'"
+                            :data-selected="travellerType === 'family'"
+                            class="flex flex-col rounded-sm border p-6 text-left transition-all border-black/10 bg-transparent dark:border-white/10 data-selected:border-[#D96B27] data-selected:bg-[#FAF6F0] data-selected:ring-2 data-selected:ring-[#D96B27]/20 data-selected:dark:bg-[#180D08]">
+                            <span class="text-lg font-bold text-[#211915] dark:text-white">Family</span>
+                            <span class="mt-2 text-xs leading-relaxed text-[#6E635C] dark:text-[#FAF6F0]/70">Parents or
+                                grandparents with children.</span>
                         </button>
-
                         <button type="button" @click="travellerType = 'group'; adults = 4; children = 0"
-                            :class="travellerType === 'group' ?
-                                'border-[#D96B27] bg-[#FAF6F0] dark:bg-[#180D08] text-[#D96B27] ring-2 ring-[#D96B27]/20' :
-                                'border-black/10 bg-transparent text-[#211915] dark:border-white/10 dark:text-white'"
-                            class="flex flex-col items-center justify-center rounded-sm border p-6 text-center transition-all">
-                            <span
-                                class="flex size-12 items-center justify-center rounded-full bg-[#D96B27]/10 text-[#D96B27]">
-                                <svg class="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                                </svg>
-                            </span>
-                            <span class="mt-3 text-sm font-bold uppercase">Group</span>
-                            <span class="mt-1 text-xs text-[#6E635C] dark:text-[#FAF6F0]/60">Friends / Family</span>
+                            :aria-pressed="travellerType === 'group'"
+                            :data-selected="travellerType === 'group'"
+                            class="flex flex-col rounded-sm border p-6 text-left transition-all border-black/10 bg-transparent dark:border-white/10 data-selected:border-[#D96B27] data-selected:bg-[#FAF6F0] data-selected:ring-2 data-selected:ring-[#D96B27]/20 data-selected:dark:bg-[#180D08]">
+                            <span class="text-lg font-bold text-[#211915] dark:text-white">Group</span>
+                            <span class="mt-2 text-xs leading-relaxed text-[#6E635C] dark:text-[#FAF6F0]/70">Friends or
+                                extended family travelling together.</span>
                         </button>
                     </div>
 
@@ -540,25 +436,6 @@
                             <div class="flex items-center justify-between">
                                 <div>
                                     <p class="font-bold text-[#211915] dark:text-white">Adults</p>
-
-                                    @if ($tour || $destination)
-                                        <div
-                                            class="mx-auto mt-8 max-w-2xl rounded-sm border border-[#D96B27]/20 bg-[#D96B27]/10 p-4 text-center">
-                                            <p class="text-xs font-bold uppercase tracking-wider text-[#D96B27]">Your
-                                                inquiry is about</p>
-                                            <p class="mt-1 font-semibold text-[#211915] dark:text-white">
-                                                @if ($tour)
-                                                    {{ $tour->title }}
-                                                @endif
-                                                @if ($tour && $destination)
-                                                    <span class="mx-1 text-[#D96B27]">&bull;</span>
-                                                @endif
-                                                @if ($destination)
-                                                    {{ $destination->name }}
-                                                @endif
-                                            </p>
-                                        </div>
-                                    @endif
                                     <p class="text-xs text-[#6E635C] dark:text-[#FAF6F0]/60">Ages 12 and above</p>
                                 </div>
                                 <div class="flex items-center gap-3">
@@ -591,7 +468,7 @@
                 </div>
 
                 <!-- STEP 3: Tour Duration -->
-                <div x-show="step === 3" x-transition.opacity>
+                <div x-show="step === 3" x-cloak x-transition.opacity>
                     <div class="flex flex-wrap items-baseline justify-between gap-2">
                         <h2 class="text-2xl font-extrabold text-[#211915] sm:text-3xl dark:text-white">
                             Tour Duration
@@ -604,10 +481,8 @@
 
                     <div class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                         <button type="button" @click="setDuration('2-3_days', 3)"
-                            :class="duration === '2-3_days' ?
-                                'border-[#D96B27] bg-[#FAF6F0] ring-2 ring-[#D96B27]/20 dark:bg-[#180D08]' :
-                                'border-black/10 bg-transparent dark:border-white/10'"
-                            class="flex flex-col rounded-sm border p-6 text-left transition-all">
+                            :data-selected="duration === '2-3_days'"
+                            class="flex flex-col rounded-sm border p-6 text-left transition-all border-black/10 bg-transparent dark:border-white/10 data-selected:border-[#D96B27] data-selected:bg-[#FAF6F0] data-selected:ring-2 data-selected:ring-[#D96B27]/20 data-selected:dark:bg-[#180D08]">
                             <span class="text-xl font-bold text-[#211915] dark:text-white">2 to 3 DAYS</span>
                             <span class="mt-1 text-xs font-semibold text-[#D96B27]">3 Days Itinerary</span>
                             <span class="mt-2 text-xs text-[#6E635C] dark:text-[#FAF6F0]/70">Perfect for a short safari
@@ -615,10 +490,8 @@
                         </button>
 
                         <button type="button" @click="setDuration('4-6_days', 5)"
-                            :class="duration === '4-6_days' ?
-                                'border-[#D96B27] bg-[#FAF6F0] ring-2 ring-[#D96B27]/20 dark:bg-[#180D08]' :
-                                'border-black/10 bg-transparent dark:border-white/10'"
-                            class="relative flex flex-col rounded-sm border p-6 text-left transition-all">
+                            :data-selected="duration === '4-6_days'"
+                            class="relative flex flex-col rounded-sm border p-6 text-left transition-all border-black/10 bg-transparent dark:border-white/10 data-selected:border-[#D96B27] data-selected:bg-[#FAF6F0] data-selected:ring-2 data-selected:ring-[#D96B27]/20 data-selected:dark:bg-[#180D08]">
                             <span
                                 class="absolute top-3 right-3 rounded-full bg-[#D96B27] px-2 py-0.5 text-[10px] font-semibold text-white">Recommended</span>
                             <span class="text-xl font-bold text-[#211915] dark:text-white">4 to 6 DAYS</span>
@@ -628,10 +501,8 @@
                         </button>
 
                         <button type="button" @click="setDuration('7-9_days', 7)"
-                            :class="duration === '7-9_days' ?
-                                'border-[#D96B27] bg-[#FAF6F0] ring-2 ring-[#D96B27]/20 dark:bg-[#180D08]' :
-                                'border-black/10 bg-transparent dark:border-white/10'"
-                            class="relative flex flex-col rounded-sm border p-6 text-left transition-all">
+                            :data-selected="duration === '7-9_days'"
+                            class="relative flex flex-col rounded-sm border p-6 text-left transition-all border-black/10 bg-transparent dark:border-white/10 data-selected:border-[#D96B27] data-selected:bg-[#FAF6F0] data-selected:ring-2 data-selected:ring-[#D96B27]/20 data-selected:dark:bg-[#180D08]">
                             <span
                                 class="absolute top-3 right-3 rounded-full bg-[#24140E] px-2 py-0.5 text-[10px] font-semibold text-white">Most
                                 Popular</span>
@@ -642,10 +513,8 @@
                         </button>
 
                         <button type="button" @click="setDuration('10plus_days', 10)"
-                            :class="duration === '10plus_days' ?
-                                'border-[#D96B27] bg-[#FAF6F0] ring-2 ring-[#D96B27]/20 dark:bg-[#180D08]' :
-                                'border-black/10 bg-transparent dark:border-white/10'"
-                            class="flex flex-col rounded-sm border p-6 text-left transition-all">
+                            :data-selected="duration === '10plus_days'"
+                            class="flex flex-col rounded-sm border p-6 text-left transition-all border-black/10 bg-transparent dark:border-white/10 data-selected:border-[#D96B27] data-selected:bg-[#FAF6F0] data-selected:ring-2 data-selected:ring-[#D96B27]/20 data-selected:dark:bg-[#180D08]">
                             <span class="text-xl font-bold text-[#211915] dark:text-white">10+ DAYS</span>
                             <span class="mt-1 text-xs font-semibold text-[#D96B27]">10 Days Itinerary</span>
                             <span class="mt-2 text-xs text-[#6E635C] dark:text-[#FAF6F0]/70">Grand wildlife expedition
@@ -655,7 +524,7 @@
                 </div>
 
                 <!-- STEP 4: When would you like to travel? -->
-                <div x-show="step === 4" x-transition.opacity>
+                <div x-show="step === 4" x-cloak x-transition.opacity>
                     <div class="flex flex-wrap items-baseline justify-between gap-2">
                         <h2 class="text-2xl font-extrabold text-[#211915] sm:text-3xl dark:text-white">
                             When would you like to travel?
@@ -680,10 +549,8 @@
                         <div class="mt-3 flex flex-wrap gap-2.5">
                             @foreach ($years as $y)
                                 <button type="button" @click="selectYear('{{ $y }}')"
-                                    :class="year === '{{ $y }}' ?
-                                        'border-[#D96B27] bg-[#D96B27] text-white shadow-xs font-bold' :
-                                        'border-black/10 bg-[#FAF6F0] text-[#211915] hover:border-black/30 dark:border-white/10 dark:bg-[#180D08] dark:text-white font-medium'"
-                                    class="rounded-sm border px-5 py-2.5 text-sm transition-all">
+                                    :data-selected="year === '{{ $y }}'"
+                                    class="rounded-sm border px-5 py-2.5 text-sm transition-all border-black/10 bg-[#FAF6F0] text-[#211915] hover:border-black/30 dark:border-white/10 dark:bg-[#180D08] dark:text-white font-medium data-selected:border-[#D96B27] data-selected:bg-[#D96B27] data-selected:text-white data-selected:shadow-xs data-selected:font-bold">
                                     {{ $y }}
                                 </button>
                             @endforeach
@@ -819,7 +686,7 @@
                 </div>
 
                 <!-- STEP 5: Accommodation Style -->
-                <div x-show="step === 5" x-transition.opacity>
+                <div x-show="step === 5" x-cloak x-transition.opacity>
                     <h2 class="text-2xl font-extrabold text-[#211915] sm:text-3xl dark:text-white">
                         Where would you like to stay?
                     </h2>
@@ -829,10 +696,8 @@
 
                     <div class="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
                         <button type="button" @click="accommodation = 'comfort'"
-                            :class="accommodation === 'comfort' ?
-                                'border-[#D96B27] bg-[#FAF6F0] ring-2 ring-[#D96B27]/20 dark:bg-[#180D08]' :
-                                'border-black/10 bg-transparent dark:border-white/10'"
-                            class="flex flex-col rounded-sm border p-6 text-left transition-all">
+                            :data-selected="accommodation === 'comfort'"
+                            class="flex flex-col rounded-sm border p-6 text-left transition-all border-black/10 bg-transparent dark:border-white/10 data-selected:border-[#D96B27] data-selected:bg-[#FAF6F0] data-selected:ring-2 data-selected:ring-[#D96B27]/20 data-selected:dark:bg-[#180D08]">
                             <span class="text-lg font-bold text-[#211915] dark:text-white">Comfort & Mid-Range</span>
                             <span class="mt-1 text-xs font-semibold text-[#D96B27]">$ &bull; Standard Tented
                                 Camps</span>
@@ -843,10 +708,8 @@
                         </button>
 
                         <button type="button" @click="accommodation = 'luxury'"
-                            :class="accommodation === 'luxury' ?
-                                'border-[#D96B27] bg-[#FAF6F0] ring-2 ring-[#D96B27]/20 dark:bg-[#180D08]' :
-                                'border-black/10 bg-transparent dark:border-white/10'"
-                            class="relative flex flex-col rounded-sm border p-6 text-left transition-all">
+                            :data-selected="accommodation === 'luxury'"
+                            class="relative flex flex-col rounded-sm border p-6 text-left transition-all border-black/10 bg-transparent dark:border-white/10 data-selected:border-[#D96B27] data-selected:bg-[#FAF6F0] data-selected:ring-2 data-selected:ring-[#D96B27]/20 data-selected:dark:bg-[#180D08]">
                             <span
                                 class="absolute top-3 right-3 rounded-full bg-[#D96B27] px-2 py-0.5 text-[10px] font-semibold text-white">Recommended</span>
                             <span class="text-lg font-bold text-[#211915] dark:text-white">Luxury Lodges</span>
@@ -858,10 +721,8 @@
                         </button>
 
                         <button type="button" @click="accommodation = 'signature_luxury'"
-                            :class="accommodation === 'signature_luxury' ?
-                                'border-[#D96B27] bg-[#FAF6F0] ring-2 ring-[#D96B27]/20 dark:bg-[#180D08]' :
-                                'border-black/10 bg-transparent dark:border-white/10'"
-                            class="flex flex-col rounded-sm border p-6 text-left transition-all">
+                            :data-selected="accommodation === 'signature_luxury'"
+                            class="flex flex-col rounded-sm border p-6 text-left transition-all border-black/10 bg-transparent dark:border-white/10 data-selected:border-[#D96B27] data-selected:bg-[#FAF6F0] data-selected:ring-2 data-selected:ring-[#D96B27]/20 data-selected:dark:bg-[#180D08]">
                             <span class="text-lg font-bold text-[#211915] dark:text-white">Signature
                                 Ultra-Luxury</span>
                             <span class="mt-1 text-xs font-semibold text-[#D96B27]">$$$ &bull; Exclusive
@@ -872,10 +733,35 @@
                             </p>
                         </button>
                     </div>
+
+                    <!-- Optional budget -->
+                    <div class="mt-10">
+                        <h3 class="text-sm font-semibold uppercase tracking-wider text-[#D96B27]">Budget per person
+                            <span
+                                class="font-normal normal-case tracking-normal text-[#6E635C] dark:text-[#FAF6F0]/60">(optional,
+                                excluding international flights)</span>
+                        </h3>
+                        <div class="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-5">
+                            @foreach (\App\Models\Inquiry::BUDGET_RANGES as $value => $label)
+                                <button type="button"
+                                    @click="budget = budget === @js($value) ? '' : @js($value)"
+                                    :aria-pressed="budget === @js($value)"
+                                    :data-selected="budget === @js($value)"
+                                    class="rounded-sm border px-4 py-3 text-sm font-bold transition-all border-black/10 bg-transparent text-[#211915] dark:border-white/10 dark:text-white data-selected:border-[#D96B27] data-selected:bg-[#FAF6F0] data-selected:ring-2 data-selected:ring-[#D96B27]/20 data-selected:text-[#D96B27] data-selected:dark:bg-[#180D08]">
+                                    {{ $label }}
+                                </button>
+                            @endforeach
+                            <button type="button" @click="budget = ''" :aria-pressed="budget === ''"
+                                :data-selected="budget === ''"
+                                class="rounded-sm border px-4 py-3 text-sm font-bold transition-all border-black/10 bg-transparent text-[#211915] dark:border-white/10 dark:text-white data-selected:border-[#D96B27] data-selected:bg-[#FAF6F0] data-selected:ring-2 data-selected:ring-[#D96B27]/20 data-selected:text-[#D96B27] data-selected:dark:bg-[#180D08]">
+                                Not sure yet
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- STEP 6: Selected Details Preview & Contact Information -->
-                <div x-show="step === 6" x-transition.opacity>
+                <div x-show="step === 6" x-cloak x-transition.opacity>
                     <h2 class="text-2xl font-extrabold text-[#211915] sm:text-3xl dark:text-white">
                         Where should we send your custom safari plan?
                     </h2>
@@ -903,12 +789,12 @@
                                 class="rounded-sm border border-black/5 bg-white p-3 dark:border-white/5 dark:bg-[#24140E]">
                                 <div class="flex items-center justify-between">
                                     <span
-                                        class="text-[10px] font-bold uppercase tracking-wider text-[#6E635C] dark:text-[#FAF6F0]/60">Trip
-                                        Focus</span>
+                                        class="text-[10px] font-bold uppercase tracking-wider text-[#6E635C] dark:text-[#FAF6F0]/60">Experiences</span>
                                     <button type="button" @click="step = 1"
                                         class="text-[11px] font-semibold text-[#D96B27] hover:underline">Edit</button>
                                 </div>
-                                <p class="mt-1 font-bold text-[#211915] dark:text-white" x-text="getTripTypeLabel()">
+                                <p class="mt-1 font-bold text-[#211915] dark:text-white"
+                                    x-text="getExperienceLabel()">
                                 </p>
                             </div>
 
@@ -963,6 +849,8 @@
                                 </div>
                                 <p class="mt-1 font-bold text-[#211915] dark:text-white"
                                     x-text="getAccommodationLabel()"></p>
+                                <p class="mt-1 text-[11px] text-[#6E635C] dark:text-[#FAF6F0]/70">
+                                    Budget: <span class="font-semibold" x-text="getBudgetLabel()"></span></p>
                             </div>
                         </div>
                     </div>
@@ -1023,20 +911,20 @@
                 <!-- Navigation Controls -->
                 <div
                     class="mt-10 flex items-center justify-between border-t border-black/10 pt-6 dark:border-white/10">
-                    <button type="button" x-show="step > 1" @click="prevStep()"
+                    <button type="button" x-cloak x-show="step > 1" @click="prevStep()"
                         class="inline-flex items-center gap-2 rounded-sm border border-black/20 px-5 py-2.5 text-sm font-semibold text-[#211915] transition-colors hover:bg-black/5 dark:border-white/20 dark:text-white dark:hover:bg-white/10">
                         &larr; Back
                     </button>
 
                     <div class="ml-auto flex items-center gap-3">
                         <button type="button" x-show="step < totalSteps" @click="nextStep()"
-                            :disabled="!canProceed()"
+                            :disabled="!canProceed()" @disabled(empty($selectedExperienceIds))
                             class="inline-flex items-center gap-2 rounded-sm bg-[#D96B27] px-6 py-2.5 text-sm font-semibold text-white shadow-xs transition-colors hover:bg-[#BF5A1B] disabled:opacity-50 disabled:cursor-not-allowed">
                             <span>Next Step</span>
                             <span>&rarr;</span>
                         </button>
 
-                        <button type="submit" x-show="step === totalSteps" :disabled="!name || !email"
+                        <button type="submit" x-cloak x-show="step === totalSteps" :disabled="!name || !email"
                             class="inline-flex items-center gap-2 rounded-sm bg-[#D96B27] px-7 py-3 text-sm font-bold text-white shadow-md transition-colors hover:bg-[#BF5A1B] disabled:opacity-50 disabled:cursor-not-allowed">
                             <span>Get my plan</span>
                             <span>&rarr;</span>

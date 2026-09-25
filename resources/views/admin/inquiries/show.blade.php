@@ -66,8 +66,14 @@
 
                     <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 text-xs">
                         <div class="rounded-sm border border-black/5 bg-[#FAF6F0] p-3.5 dark:border-white/5 dark:bg-[#180D08]">
-                            <span class="text-[10px] font-bold uppercase tracking-wider text-[#6E635C] dark:text-[#FAF6F0]/60">Trip Focus</span>
-                            <p class="mt-1 font-bold text-[#211915] dark:text-white">{{ $inquiry->trip_type_label }}</p>
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-[#6E635C] dark:text-[#FAF6F0]/60">Experiences</span>
+                            <div class="mt-1.5 flex flex-wrap gap-1.5">
+                                @forelse ($inquiry->experiences as $experience)
+                                    <span class="rounded-xs bg-[#D96B27]/10 px-2 py-0.5 text-[11px] font-bold text-[#D96B27]">{{ $experience->name }}</span>
+                                @empty
+                                    <span class="font-bold text-[#211915] dark:text-white">Custom Safari</span>
+                                @endforelse
+                            </div>
                         </div>
 
                         <div class="rounded-sm border border-black/5 bg-[#FAF6F0] p-3.5 dark:border-white/5 dark:bg-[#180D08]">
@@ -90,15 +96,30 @@
                             @endif
                         </div>
 
-                        <div class="rounded-sm border border-black/5 bg-[#FAF6F0] p-3.5 sm:col-span-2 dark:border-white/5 dark:bg-[#180D08]">
+                        <div class="rounded-sm border border-black/5 bg-[#FAF6F0] p-3.5 dark:border-white/5 dark:bg-[#180D08]">
                             <span class="text-[10px] font-bold uppercase tracking-wider text-[#6E635C] dark:text-[#FAF6F0]/60">Accommodation Style</span>
                             <p class="mt-1 font-bold text-[#211915] dark:text-white">{{ $inquiry->accommodation_label }}</p>
+                        </div>
+
+                        <div class="rounded-sm border border-black/5 bg-[#FAF6F0] p-3.5 dark:border-white/5 dark:bg-[#180D08]">
+                            <span class="text-[10px] font-bold uppercase tracking-wider text-[#6E635C] dark:text-[#FAF6F0]/60">Budget per Person</span>
+                            <p class="mt-1 font-bold text-[#211915] dark:text-white">{{ $inquiry->budget_label ?? 'Not specified' }}</p>
+                            @if ($inquiry->budget_label)
+                                <p class="mt-0.5 text-[11px] text-[#6E635C] dark:text-[#FAF6F0]/60">Excluding international flights</p>
+                            @endif
                         </div>
 
                         @if ($inquiry->tour)
                             <div class="rounded-sm border border-[#D96B27]/30 bg-[#D96B27]/10 p-3.5 sm:col-span-2">
                                 <span class="text-[10px] font-bold uppercase tracking-wider text-[#D96B27]">Inquired From Package</span>
                                 <p class="mt-1 font-bold text-[#211915] dark:text-white">{{ $inquiry->tour->title }} ({{ $inquiry->tour->duration_days }} Days)</p>
+                                @php($travellers = $inquiry->adults_count + $inquiry->children_count)
+                                <p class="mt-1 text-[#211915] dark:text-white">
+                                    From <span class="font-bold">{{ $inquiry->tour->formatted_price }}</span> per person
+                                    &times; {{ $travellers }} {{ \Illuminate\Support\Str::plural('traveller', $travellers) }}
+                                    &asymp; <span class="font-bold">{{ $inquiry->tour->formatMoney((float) $inquiry->tour->starting_price * $travellers) }}</span>
+                                </p>
+                                <p class="mt-0.5 text-[11px] text-[#6E635C] dark:text-[#FAF6F0]/60">Rough guide at the starting price, before child rates, season and accommodation upgrades.</p>
                             </div>
                         @endif
                     </div>
@@ -111,6 +132,39 @@
                                 {{ $inquiry->special_requests }}
                             </p>
                         </div>
+                    @endif
+                </div>
+
+                <!-- Quoting Guide: packages matching the guest's experiences -->
+                <div class="rounded-sm border border-black/10 bg-white p-6 shadow-xs dark:border-white/10 dark:bg-[#24140E]">
+                    <div class="flex items-baseline justify-between border-b border-black/10 pb-3 dark:border-white/10">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-[#D96B27]">Matching Packages</h3>
+                        <span class="text-[11px] text-[#6E635C] dark:text-[#FAF6F0]/60">Starting points for the quote</span>
+                    </div>
+                    @if ($matchingTours->isEmpty())
+                        <p class="mt-4 text-xs text-[#6E635C] dark:text-[#FAF6F0]/70">
+                            No published packages are tagged with these experiences yet. Tag tours with experiences in
+                            <a href="{{ route('admin.tours.index') }}" class="font-semibold text-[#D96B27] hover:underline">Tours & Packages</a>
+                            to see suggestions here.
+                        </p>
+                    @else
+                        <ul class="mt-2 divide-y divide-black/5 text-xs dark:divide-white/5">
+                            @foreach ($matchingTours as $match)
+                                <li class="flex flex-wrap items-center justify-between gap-3 py-3">
+                                    <div>
+                                        <a href="{{ route('admin.tours.edit', $match) }}" class="font-bold text-[#211915] hover:text-[#D96B27] dark:text-white">{{ $match->title }}</a>
+                                        <p class="mt-0.5 text-[11px] text-[#6E635C] dark:text-[#FAF6F0]/60">
+                                            {{ $match->duration_days }} Days / {{ $match->duration_nights }} Nights
+                                            &bull; Matches {{ $match->matching_experiences_count }} of {{ $inquiry->experiences->count() }} experiences
+                                        </p>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="font-bold text-[#D96B27]">From {{ $match->formatted_price }}</p>
+                                        <a href="{{ route('tours.show', $match) }}" target="_blank" class="text-[11px] text-[#6E635C] hover:underline dark:text-[#FAF6F0]/60">View live ↗</a>
+                                    </div>
+                                </li>
+                            @endforeach
+                        </ul>
                     @endif
                 </div>
 

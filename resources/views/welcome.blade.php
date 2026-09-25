@@ -5,7 +5,7 @@
         <!-- Background Imagery with Ambient Gradient Overlay -->
         <div class="absolute inset-0 z-0">
             <img src="https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&w=2000&q=80"
-                alt="Cheetah scanning savannah in Kenya" class="size-full object-cover object-center opacity-45">
+                alt="Safari vehicle on a game drive at sunset in Kenya" class="size-full object-cover object-center opacity-45">
             <div class="absolute inset-0 bg-gradient-to-t from-[#180D08] via-[#180D08]/60 to-black/40"></div>
             <div
                 class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-transparent via-[#180D08]/40 to-[#180D08]">
@@ -186,63 +186,67 @@
 
             <div class="mt-16 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
                 <div
-                    class="rounded-sm border border-black/10 bg-[#FAF6F0] p-6 transition-transform duration-200 hover:-translate-y-1 dark:border-white/10 dark:bg-[#24140E]">
-                    <div class="flex size-12 items-center justify-center rounded-sm bg-[#D96B27] text-white">
-                        <svg class="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                        </svg>
+                    class="group overflow-hidden rounded-sm border border-black/10 bg-[#FAF6F0] transition-transform duration-200 hover:-translate-y-1 dark:border-white/10 dark:bg-[#24140E]">
+                    <div class="aspect-4/3 overflow-hidden bg-black/10">
+                        <img src="https://images.unsplash.com/photo-1504173010664-32509aeebb62?auto=format&fit=crop&w=600&q=80"
+                            alt="Lionesses resting in dense bush, spotted by a safari guide" loading="lazy"
+                            class="size-full object-cover transition-transform duration-500 group-hover:scale-105">
                     </div>
-                    <h3 class="mt-5 text-lg font-bold text-[#211915] dark:text-white">Local East African Experts</h3>
-                    <p class="mt-2 text-sm text-[#6E635C] leading-relaxed dark:text-[#FAF6F0]/70">
-                        Born and raised in East Africa, our safari naturalists track wildlife movements daily and know
-                        every hidden corner of the national reserves.
-                    </p>
+                    <div class="p-6">
+                        <h3 class="text-lg font-bold text-[#211915] dark:text-white">Local East African Experts</h3>
+                        <p class="mt-2 text-sm text-[#6E635C] leading-relaxed dark:text-[#FAF6F0]/70">
+                            Born and raised in East Africa, our safari naturalists track wildlife movements daily and know
+                            every hidden corner of the national reserves.
+                        </p>
+                    </div>
                 </div>
 
                 <div
-                    class="rounded-sm border border-black/10 bg-[#FAF6F0] p-6 transition-transform duration-200 hover:-translate-y-1 dark:border-white/10 dark:bg-[#24140E]">
-                    <div class="flex size-12 items-center justify-center rounded-sm bg-[#D96B27] text-white">
-                        <svg class="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
+                    class="group overflow-hidden rounded-sm border border-black/10 bg-[#FAF6F0] transition-transform duration-200 hover:-translate-y-1 dark:border-white/10 dark:bg-[#24140E]">
+                    <div class="aspect-4/3 overflow-hidden bg-black/10">
+                        <img src="https://images.unsplash.com/photo-1519659528534-7fd733a832a0?auto=format&fit=crop&w=600&q=80"
+                            alt="Hot air balloon drifting over zebras in the Maasai Mara" loading="lazy"
+                            class="size-full object-cover transition-transform duration-500 group-hover:scale-105">
                     </div>
-                    <h3 class="mt-5 text-lg font-bold text-[#211915] dark:text-white">Direct Operator Pricing</h3>
-                    <p class="mt-2 text-sm text-[#6E635C] leading-relaxed dark:text-[#FAF6F0]/70">
-                        No middleman fees. You book directly with the local ground operator in Narok, ensuring the
-                        best value and absolute accountability.
-                    </p>
+                    <div class="p-6">
+                        <h3 class="text-lg font-bold text-[#211915] dark:text-white">Direct Operator Pricing</h3>
+                        <p class="mt-2 text-sm text-[#6E635C] leading-relaxed dark:text-[#FAF6F0]/70">
+                            No middleman fees. You book directly with the local ground operator in Narok, ensuring the
+                            best value and absolute accountability.
+                        </p>
+                    </div>
                 </div>
 
                 <div
-                    class="rounded-sm border border-black/10 bg-[#FAF6F0] p-6 transition-transform duration-200 hover:-translate-y-1 dark:border-white/10 dark:bg-[#24140E]">
-                    <div class="flex size-12 items-center justify-center rounded-sm bg-[#D96B27] text-white">
-                        <svg class="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M13 10V3L4 14h7v7l9-11h-7z" />
-                        </svg>
+                    class="group overflow-hidden rounded-sm border border-black/10 bg-[#FAF6F0] transition-transform duration-200 hover:-translate-y-1 dark:border-white/10 dark:bg-[#24140E]">
+                    <div class="aspect-4/3 overflow-hidden bg-black/10">
+                        <img src="https://images.unsplash.com/photo-1518459384564-ecfd8e80721f?auto=format&fit=crop&w=600&q=80"
+                            alt="Safari vehicles watching the wildebeest migration in the Maasai Mara" loading="lazy"
+                            class="size-full object-cover transition-transform duration-500 group-hover:scale-105">
                     </div>
-                    <h3 class="mt-5 text-lg font-bold text-[#211915] dark:text-white">Custom 4x4 Land Cruisers</h3>
-                    <p class="mt-2 text-sm text-[#6E635C] leading-relaxed dark:text-[#FAF6F0]/70">
-                        Equipped with pop-up game viewing roofs, charging outlets, binoculars, high-frequency radios,
-                        and guaranteed window seating for every traveler.
-                    </p>
+                    <div class="p-6">
+                        <h3 class="text-lg font-bold text-[#211915] dark:text-white">Custom 4x4 Land Cruisers</h3>
+                        <p class="mt-2 text-sm text-[#6E635C] leading-relaxed dark:text-[#FAF6F0]/70">
+                            Equipped with pop-up game viewing roofs, charging outlets, binoculars, high-frequency radios,
+                            and guaranteed window seating for every traveler.
+                        </p>
+                    </div>
                 </div>
 
                 <div
-                    class="rounded-sm border border-black/10 bg-[#FAF6F0] p-6 transition-transform duration-200 hover:-translate-y-1 dark:border-white/10 dark:bg-[#24140E]">
-                    <div class="flex size-12 items-center justify-center rounded-sm bg-[#D96B27] text-white">
-                        <svg class="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                        </svg>
+                    class="group overflow-hidden rounded-sm border border-black/10 bg-[#FAF6F0] transition-transform duration-200 hover:-translate-y-1 dark:border-white/10 dark:bg-[#24140E]">
+                    <div class="aspect-4/3 overflow-hidden bg-black/10">
+                        <img src="https://images.unsplash.com/photo-1535338454770-8be927b5a00b?auto=format&fit=crop&w=600&q=80"
+                            alt="Rhino mother and calf in a protected conservancy" loading="lazy"
+                            class="size-full object-cover transition-transform duration-500 group-hover:scale-105">
                     </div>
-                    <h3 class="mt-5 text-lg font-bold text-[#211915] dark:text-white">Responsible Safari Travel</h3>
-                    <p class="mt-2 text-sm text-[#6E635C] leading-relaxed dark:text-[#FAF6F0]/70">
-                        We actively support wildlife conservation trusts and partner directly with indigenous Maasai and
-                        Samburu community conservancies.
-                    </p>
+                    <div class="p-6">
+                        <h3 class="text-lg font-bold text-[#211915] dark:text-white">Responsible Safari Travel</h3>
+                        <p class="mt-2 text-sm text-[#6E635C] leading-relaxed dark:text-[#FAF6F0]/70">
+                            We actively support wildlife conservation trusts and partner directly with indigenous Maasai and
+                            Samburu community conservancies.
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -316,20 +320,20 @@
                 </p>
             </div>
 
-            <div class="mt-16 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6 text-center">
+            <div class="mt-16 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
                 @foreach ($experiences as $experience)
-                    <div
-                        class="rounded-sm border border-black/10 bg-[#FAF6F0] p-6 transition-all hover:border-[#D96B27] hover:shadow-md dark:border-white/10 dark:bg-[#24140E]">
-                        <div
-                            class="mx-auto flex size-12 items-center justify-center rounded-full bg-[#D96B27]/15 text-[#D96B27]">
-                            <svg class="size-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                            </svg>
+                    <div class="group relative aspect-4/3 overflow-hidden rounded-sm bg-[#24140E]">
+                        @if ($experience->image)
+                            <img src="{{ $experience->image }}" alt="{{ $experience->name }}" loading="lazy"
+                                class="size-full object-cover opacity-85 transition-transform duration-500 group-hover:scale-110">
+                        @endif
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent"></div>
+                        <div class="absolute inset-0 flex flex-col justify-end p-6 text-white">
+                            <h3 class="text-xl font-bold">{{ $experience->name }}</h3>
+                            @if ($experience->summary)
+                                <p class="mt-2 text-xs text-white/80 line-clamp-2">{{ $experience->summary }}</p>
+                            @endif
                         </div>
-                        <h3 class="mt-4 text-sm font-bold text-[#211915] dark:text-white">{{ $experience->name }}</h3>
                     </div>
                 @endforeach
             </div>

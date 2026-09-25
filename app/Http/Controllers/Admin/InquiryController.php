@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Inquiry;
+use App\Models\Tour;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -15,7 +16,7 @@ class InquiryController extends Controller
         $status = $request->query('status');
         $search = $request->query('q');
 
-        $query = Inquiry::query()->with(['tour', 'destination'])->latest();
+        $query = Inquiry::query()->with(['tour', 'destination', 'experiences'])->latest();
 
         if ($status && in_array($status, ['new', 'contacted', 'quote_sent', 'confirmed', 'cancelled'], true)) {
             $query->where('status', $status);
@@ -46,15 +47,26 @@ class InquiryController extends Controller
 
     public function show(Inquiry $inquiry): View
     {
-        $inquiry->load(['tour', 'destination']);
+        $inquiry->load(['tour', 'destination', 'experiences']);
 
-        return view('admin.inquiries.show', compact('inquiry'));
+        // Quoting head start: published packages sharing the guest's chosen experiences, best match first.
+        $experienceIds = $inquiry->experiences->modelKeys();
+        $matchingTours = $experienceIds === [] ? collect() : Tour::published()
+            ->when($inquiry->tour_id, fn ($query, $tourId) => $query->whereKeyNot($tourId))
+            ->whereHas('experiences', fn ($query) => $query->whereKey($experienceIds))
+            ->withCount(['experiences as matching_experiences_count' => fn ($query) => $query->whereKey($experienceIds)])
+            ->orderByDesc('matching_experiences_count')
+            ->orderBy('starting_price')
+            ->limit(6)
+            ->get();
+
+        return view('admin.inquiries.show', compact('inquiry', 'matchingTours'));
     }
 
     public function update(Request $request, Inquiry $inquiry): RedirectResponse
     {
         $validated = $request->validate([
-            'status'         => ['required', 'string', 'in:new,contacted,quote_sent,confirmed,cancelled'],
+            'status' => ['required', 'string', 'in:new,contacted,quote_sent,confirmed,cancelled'],
             'internal_notes' => ['nullable', 'string', 'max:10000'],
         ]);
 

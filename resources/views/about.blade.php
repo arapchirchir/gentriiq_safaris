@@ -20,7 +20,7 @@
     <section class="relative flex min-h-[60vh] items-center overflow-hidden bg-[#180D08] text-white">
         <div class="absolute inset-0 z-0">
             <img src="https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?auto=format&fit=crop&w=2000&q=80"
-                alt="Safari vehicle on the East African savannah" class="size-full object-cover object-center opacity-40">
+                alt="Acacia tree silhouetted at sunset on the East African savannah" class="size-full object-cover object-center opacity-40">
             <div class="absolute inset-0 bg-gradient-to-t from-[#180D08] via-[#180D08]/60 to-black/40"></div>
         </div>
 
@@ -82,7 +82,7 @@
             </div>
             <div class="relative aspect-4/3 overflow-hidden rounded-sm bg-black/10">
                 <img src="https://images.unsplash.com/photo-1516426122078-c23e76319801?auto=format&fit=crop&w=1200&q=80"
-                    alt="Cheetah scanning the savannah in the Maasai Mara" loading="lazy"
+                    alt="Safari vehicle on a game drive at sunset" loading="lazy"
                     class="size-full object-cover">
             </div>
         </div>

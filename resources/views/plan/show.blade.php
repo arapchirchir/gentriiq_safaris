@@ -61,15 +61,10 @@
                     <div
                         class="rounded-sm border border-black/5 bg-[#FAF6F0]/70 p-4 dark:border-white/5 dark:bg-[#180D08]/60">
                         <span
-                            class="text-[11px] font-bold uppercase tracking-wider text-[#6E635C] dark:text-[#FAF6F0]/60">Trip
-                            Type</span>
+                            class="text-[11px] font-bold uppercase tracking-wider text-[#6E635C] dark:text-[#FAF6F0]/60">Experiences</span>
                         <div class="mt-1 flex items-center gap-2">
-                            <svg class="size-4 text-[#D96B27]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064" />
-                            </svg>
                             <span
-                                class="text-sm font-bold text-[#211915] dark:text-white">{{ $inquiry->trip_type_label }}</span>
+                                class="text-sm font-bold text-[#211915] dark:text-white">{{ $inquiry->experiences_label }}</span>
                         </div>
                     </div>
 
@@ -79,10 +74,6 @@
                         <span
                             class="text-[11px] font-bold uppercase tracking-wider text-[#6E635C] dark:text-[#FAF6F0]/60">Travelers</span>
                         <div class="mt-1 flex items-center gap-2">
-                            <svg class="size-4 text-[#D96B27]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                            </svg>
                             <span
                                 class="text-sm font-bold text-[#211915] dark:text-white">{{ $inquiry->traveller_label }}</span>
                         </div>
@@ -95,10 +86,6 @@
                             class="text-[11px] font-bold uppercase tracking-wider text-[#6E635C] dark:text-[#FAF6F0]/60">Travel
                             Window</span>
                         <div class="mt-1 flex items-center gap-2">
-                            <svg class="size-4 text-[#D96B27]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                            </svg>
                             <span class="text-sm font-bold text-[#211915] dark:text-white">
                                 {{ $inquiry->travel_date?->format('M d, Y') ?? $inquiry->travel_month . ' ' . $inquiry->travel_year }}
                                 @if ($inquiry->travel_season)
@@ -116,10 +103,6 @@
                             class="text-[11px] font-bold uppercase tracking-wider text-[#6E635C] dark:text-[#FAF6F0]/60">Planned
                             Duration</span>
                         <div class="mt-1 flex items-center gap-2">
-                            <svg class="size-4 text-[#D96B27]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
                             <span
                                 class="text-sm font-bold text-[#211915] dark:text-white">{{ $inquiry->duration_label }}</span>
                         </div>
@@ -132,13 +115,12 @@
                             class="text-[11px] font-bold uppercase tracking-wider text-[#6E635C] dark:text-[#FAF6F0]/60">Accommodation
                             Preference</span>
                         <div class="mt-1 flex items-center gap-2">
-                            <svg class="size-4 text-[#D96B27]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                            </svg>
                             <span
                                 class="text-sm font-bold text-[#211915] dark:text-white">{{ $inquiry->accommodation_label }}</span>
                         </div>
+                        @if ($inquiry->budget_label)
+                            <p class="mt-1 text-xs text-[#6E635C] dark:text-[#FAF6F0]/70">Budget: {{ $inquiry->budget_label }} per person</p>
+                        @endif
                     </div>
                 </div>
 

@@ -4,6 +4,7 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Vite;
 use Symfony\Component\HttpFoundation\Response;
 
 class SetSecurityHeaders
@@ -21,14 +22,21 @@ class SetSecurityHeaders
             $response->headers->set('Strict-Transport-Security', 'max-age=63072000; includeSubDomains; preload');
         }
 
+        // Local `composer run dev` serves assets from the Vite dev server; never allowed in production.
+        $vite = '';
+        if (! app()->isProduction() && Vite::isRunningHot()) {
+            $origin = rtrim((string) file_get_contents(Vite::hotFile()));
+            $vite = ' '.$origin.' '.preg_replace('#^http#', 'ws', $origin);
+        }
+
         // Alpine.js requires unsafe-inline + unsafe-eval; Unsplash images are used in the trip planner form.
         $csp = implode(' ', [
             "default-src 'self';",
-            "script-src 'self' 'unsafe-inline' 'unsafe-eval';",
-            "style-src 'self' 'unsafe-inline';",
-            "img-src 'self' data: https://images.unsplash.com https://og.tailwindui.com;",
-            "font-src 'self' data:;",
-            "connect-src 'self';",
+            "script-src 'self' 'unsafe-inline' 'unsafe-eval'{$vite};",
+            "style-src 'self' 'unsafe-inline'{$vite};",
+            "img-src 'self' data: https://images.unsplash.com https://og.tailwindui.com{$vite};",
+            "font-src 'self' data:{$vite};",
+            "connect-src 'self'{$vite};",
             "frame-src 'none';",
             "frame-ancestors 'self';",
             "base-uri 'self';",

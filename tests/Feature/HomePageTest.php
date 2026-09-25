@@ -1,5 +1,8 @@
 <?php
 
+use App\Models\Experience;
+use Database\Seeders\ExperienceSeeder;
+
 test('homepage loads successfully with brand name and key sections', function () {
     $response = $this->get('/');
 
@@ -34,4 +37,19 @@ test('homepage title leads with the Gentriiq brand name', function () {
         ->assertSee('<title>Gentriiq Safaris &amp; Tours — Authentic East African Safaris &amp; Adventures</title>', false)
         ->assertSee('<meta property="og:title"'."\n".'        content="Gentriiq Safaris &amp; Tours — Authentic East African Safaris &amp; Adventures">', false)
         ->assertDontSee('<title>Authentic East African Safaris', false);
+});
+
+test('signature experiences are shown as photos, not a repeated icon', function () {
+    $this->seed(ExperienceSeeder::class);
+
+    $response = $this->get('/')->assertOk();
+
+    foreach (Experience::featured()->get() as $experience) {
+        expect($experience->image)->not->toBeNull();
+        $response->assertSee($experience->image)->assertSee($experience->name);
+    }
+
+    // The old icon badges (orange square / tinted circle) must not come back on public feature cards.
+    $response->assertDontSee('flex size-12 items-center justify-center rounded-sm bg-[#D96B27] text-white', false)
+        ->assertDontSee('mx-auto flex size-12 items-center justify-center rounded-full bg-[#D96B27]/15', false);
 });

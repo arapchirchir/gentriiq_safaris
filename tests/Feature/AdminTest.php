@@ -90,7 +90,6 @@ test('sales specialist can update inquiry status and internal notes', function (
     ]);
 
     $inquiry = Inquiry::create([
-        'trip_type' => 'safari',
         'traveller_type' => 'partner',
         'adults_count' => 2,
         'children_count' => 0,

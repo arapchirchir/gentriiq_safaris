@@ -99,6 +99,14 @@ class Tour extends Model
 
     public function getFormattedPriceAttribute(): string
     {
+        return $this->formatMoney((float) $this->starting_price);
+    }
+
+    /**
+     * Format an amount in this tour's currency, e.g. for quote estimates.
+     */
+    public function formatMoney(float $amount): string
+    {
         $symbol = match ($this->currency) {
             'USD' => '$',
             'EUR' => '€',
@@ -107,6 +115,6 @@ class Tour extends Model
             default => $this->currency.' ',
         };
 
-        return $symbol.number_format((float) $this->starting_price, fmod((float) $this->starting_price, 1) === 0.0 ? 0 : 2);
+        return $symbol.number_format($amount, fmod($amount, 1) === 0.0 ? 0 : 2);
     }
 }

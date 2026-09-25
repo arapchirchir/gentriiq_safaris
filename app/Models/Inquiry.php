@@ -6,18 +6,28 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Str;
 
 class Inquiry extends Model
 {
     use HasFactory;
 
+    /**
+     * Optional per-person budget brackets offered in the trip planner (USD, excluding international flights).
+     */
+    public const BUDGET_RANGES = [
+        'under_2000' => 'Under $2,000',
+        '2000_4000' => '$2,000 – $4,000',
+        '4000_7000' => '$4,000 – $7,000',
+        '7000_plus' => '$7,000+',
+    ];
+
     protected $fillable = [
         'reference',
         'token',
         'tour_id',
         'destination_id',
-        'trip_type',
         'traveller_type',
         'adults_count',
         'children_count',
@@ -60,6 +70,11 @@ class Inquiry extends Model
         return $this->belongsTo(Destination::class);
     }
 
+    public function experiences(): BelongsToMany
+    {
+        return $this->belongsToMany(Experience::class);
+    }
+
     protected static function booted(): void
     {
         static::creating(function (Inquiry $inquiry) {
@@ -72,25 +87,16 @@ class Inquiry extends Model
         });
     }
 
-    public function getTripTypeLabelAttribute(): string
+    public function getExperiencesLabelAttribute(): string
     {
-        $types = is_array($this->trip_type)
-            ? $this->trip_type
-            : (str_contains($this->trip_type ?? '', ',')
-                ? explode(',', $this->trip_type)
-                : (array) ($this->trip_type ? [$this->trip_type] : []));
+        $names = $this->experiences->pluck('name');
 
-        $labels = array_map(function ($type) {
-            return match (trim($type)) {
-                'safari' => 'Wildlife Safari',
-                'mountain_trek' => 'Mountain Trek',
-                'beach_holiday' => 'Beach Holiday',
-                'bush_beach_combined' => 'Bush to Beach',
-                default => ucfirst(str_replace('_', ' ', trim($type))),
-            };
-        }, $types);
+        return $names->isNotEmpty() ? $names->implode(' + ') : 'Custom Safari';
+    }
 
-        return ! empty($labels) ? implode(' + ', $labels) : 'Custom Safari';
+    public function getBudgetLabelAttribute(): ?string
+    {
+        return self::BUDGET_RANGES[$this->budget_range] ?? null;
     }
 
     public function getTravellerLabelAttribute(): string
@@ -149,7 +155,7 @@ class Inquiry extends Model
         if ($this->destination) {
             $text .= "- Destination: {$this->destination->name}\n";
         }
-        $text .= '- Trip Type: '.$this->trip_type_label."\n";
+        $text .= '- Experiences: '.$this->experiences_label."\n";
         $text .= '- Travelers: '.$this->traveller_label."\n";
         $travelDate = $this->travel_date
             ? Carbon::parse((string) $this->travel_date)->format('M d, Y')
@@ -157,6 +163,9 @@ class Inquiry extends Model
         $text .= "- Travel Date: {$travelDate}".($this->travel_season ? " ({$this->travel_season})" : '')."\n";
         $text .= '- Duration: '.$this->duration_label."\n";
         $text .= '- Accommodation: '.$this->accommodation_label."\n";
+        if ($this->budget_label) {
+            $text .= '- Budget: '.$this->budget_label." per person\n";
+        }
         $text .= "- Lead Guest: {$this->name}".($this->country ? " ({$this->country})" : '')."\n";
         $text .= "- Email: {$this->email}\n";
         if ($this->whatsapp || $this->phone) {
