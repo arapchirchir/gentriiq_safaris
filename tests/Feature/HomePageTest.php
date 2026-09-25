@@ -27,10 +27,11 @@ test('homepage includes a theme toggle button', function () {
         ->assertSee('Switch to light mode');
 });
 
-test('homepage uses a clean document title without a trailing separator', function () {
+test('homepage title leads with the Gentriiq brand name', function () {
     $response = $this->get('/');
 
     $response->assertOk()
-        ->assertSee('<title>Authentic East African Safaris &amp; Tours | Gentriiq Safaris &amp; Tours</title>', false)
-        ->assertDontSee('<title>Authentic East African Safaris &amp; Tours | Gentriiq Safaris &amp; Tours |</title>', false);
+        ->assertSee('<title>Gentriiq Safaris &amp; Tours — Authentic East African Safaris &amp; Adventures</title>', false)
+        ->assertSee('<meta property="og:title"'."\n".'        content="Gentriiq Safaris &amp; Tours — Authentic East African Safaris &amp; Adventures">', false)
+        ->assertDontSee('<title>Authentic East African Safaris', false);
 });

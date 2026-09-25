@@ -19,6 +19,7 @@
     </script>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @notifyCss
 </head>
 
 <body class="h-full bg-[#FAF6F0] text-[#211915] antialiased transition-colors duration-200 dark:bg-[#180D08] dark:text-[#FAF6F0]"
@@ -87,6 +88,12 @@
                                             <a href="{{ route('admin.tours.index') }}"
                                                 class="{{ request()->routeIs('admin.tours.*') ? 'bg-[#D96B27] text-white' : 'text-[#FAF6F0]/70 hover:bg-white/5 hover:text-white' }} group flex gap-x-3 rounded-sm p-2 text-sm font-semibold leading-6">
                                                 Tours & Packages
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a href="{{ route('admin.destinations.index') }}"
+                                                class="{{ request()->routeIs('admin.destinations.*') ? 'bg-[#D96B27] text-white' : 'text-[#FAF6F0]/70 hover:bg-white/5 hover:text-white' }} group flex gap-x-3 rounded-sm p-2 text-sm font-semibold leading-6">
+                                                Destinations
                                             </a>
                                         </li>
                                     </ul>
@@ -186,6 +193,19 @@
                                         <span>Tours & Packages</span>
                                     </a>
                                 </li>
+
+                                <li>
+                                    <a href="{{ route('admin.destinations.index') }}"
+                                        class="{{ request()->routeIs('admin.destinations.*') ? 'bg-[#D96B27] text-white font-bold shadow-xs' : 'text-[#FAF6F0]/70 hover:bg-white/5 hover:text-white' }} group flex items-center gap-x-3 rounded-sm p-2.5 text-xs font-semibold">
+                                        <svg class="size-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                        </svg>
+                                        <span>Destinations</span>
+                                    </a>
+                                </li>
                             </ul>
                         </li>
 
@@ -268,19 +288,18 @@
                 @endif
 
                 @if ($errors->any())
-                    <div class="mb-6 rounded-sm border border-red-500/30 bg-red-500/10 p-4 text-red-900 dark:text-red-200">
-                        <ul class="list-disc pl-5 text-xs sm:text-sm space-y-1">
-                            @foreach ($errors->all() as $error)
-                                <li>{{ $error }}</li>
-                            @endforeach
-                        </ul>
-                    </div>
+                    @php
+                        notify()->error('Please check the form below and fix the errors.', 'Fix found errors');
+                    @endphp
                 @endif
 
                 {{ $slot }}
             </main>
         </div>
     </div>
+
+    <x-notify::notify />
+    @notifyJs
 </body>
 
 </html>

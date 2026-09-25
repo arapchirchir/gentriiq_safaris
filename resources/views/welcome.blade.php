@@ -1,4 +1,4 @@
-<x-layouts.public title="Authentic East African Safaris & Tours">
+<x-layouts.public>
 
     <!-- HERO SECTION -->
     <section class="relative min-h-[88vh] flex items-center justify-center overflow-hidden bg-[#180D08] text-white">
@@ -210,7 +210,7 @@
                     </div>
                     <h3 class="mt-5 text-lg font-bold text-[#211915] dark:text-white">Direct Operator Pricing</h3>
                     <p class="mt-2 text-sm text-[#6E635C] leading-relaxed dark:text-[#FAF6F0]/70">
-                        No middleman fees. You book directly with the local ground operator in Nairobi, ensuring the
+                        No middleman fees. You book directly with the local ground operator in Narok, ensuring the
                         best value and absolute accountability.
                     </p>
                 </div>
@@ -449,7 +449,7 @@
                 Ready to Experience Your Dream African Safari?
             </h2>
             <p class="mx-auto mt-6 max-w-2xl text-base text-[#FAF6F0]/80 sm:text-lg">
-                Speak directly with our safari planning experts in Nairobi. We will craft a bespoke itinerary tailored
+                Speak directly with our safari planning experts in Narok, the gateway to the Maasai Mara. We will craft a bespoke itinerary tailored
                 to your travel dates, budget, and wildlife wishlist.
             </p>
 
@@ -484,13 +484,13 @@
 
             <!-- Operating Contacts Info -->
             <div class="mt-12 flex flex-wrap items-center justify-center gap-6 text-sm text-[#FAF6F0]/70">
-                <span>Nairobi, Kenya</span>
+                <span>Narok, Kenya</span>
                 <span>&bull;</span>
                 <a href="tel:+254717838061" class="font-medium hover:text-white">+254 717 838061 <span
                         class="text-xs text-[#D96B27]"></span></a>
                 <span>&bull;</span>
                 <a href="tel:+254720115305" class="hover:text-white">+254 720 115305 <span
-                        class="text-xs text-white/50">(Office)</span></a>
+                        class="text-xs text-white/50"></span></a>
             </div>
         </div>
     </section>

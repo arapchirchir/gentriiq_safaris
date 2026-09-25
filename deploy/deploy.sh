@@ -8,13 +8,19 @@ set -e
 
 cd ~/gentriiq_safaris
 
+echo "0. Checking production environment..."
+grep -qx 'APP_ENV=production' .env || { echo "ABORT: APP_ENV must be production"; exit 1; }
+grep -qx 'APP_DEBUG=false' .env || { echo "ABORT: APP_DEBUG must be false"; exit 1; }
+
 echo "1. Pulling latest code..."
 git pull origin master
+rm -f public/hot
 
 echo "2. Installing Composer dependencies..."
 composer install --no-dev --prefer-dist --optimize-autoloader
 
 echo "3. Running migrations..."
+# Never use migrate:fresh here — it drops every table, including customer inquiries.
 php artisan migrate --force
 
 echo "4. Running seeders..."

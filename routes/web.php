@@ -26,6 +26,7 @@ Route::get('/', function () {
     return view('welcome', compact('featuredTours', 'destinations', 'experiences'));
 })->name('home');
 
+Route::view('/about', 'about')->name('about');
 Route::get('/tours/{tour:slug}', [TourController::class, 'show'])->name('tours.show');
 Route::get('/destinations/{destination:slug}', [DestinationController::class, 'show'])->name('destinations.show');
 Route::get('/plan-your-trip', [TripPlannerController::class, 'create'])->name('plan.create');
@@ -33,6 +34,7 @@ Route::post('/plan-your-trip', [TripPlannerController::class, 'store'])->middlew
 Route::get('/plan-your-trip/{token}', [TripPlannerController::class, 'show'])->middleware('throttle:30,1')->name('plan.show');
 
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\DestinationController as AdminDestinationController;
 use App\Http\Controllers\Admin\InquiryController as AdminInquiryController;
 use App\Http\Controllers\Admin\TourController as AdminTourController;
 
@@ -51,7 +53,20 @@ Route::middleware(['auth', 'role'])->group(function () {
     // Tours & Packages Management (Editor & Admin)
     Route::middleware(['role:editor,admin,super_admin'])->prefix('staff/tours')->name('admin.tours.')->group(function () {
         Route::get('/', [AdminTourController::class, 'index'])->name('index');
+        Route::get('/create', [AdminTourController::class, 'create'])->name('create');
+        Route::post('/', [AdminTourController::class, 'store'])->name('store');
         Route::get('/{tour}/edit', [AdminTourController::class, 'edit'])->name('edit');
         Route::put('/{tour}', [AdminTourController::class, 'update'])->name('update');
+        Route::delete('/{tour}', [AdminTourController::class, 'destroy'])->name('destroy');
+    });
+
+    // Destinations Management (Editor & Admin)
+    Route::middleware(['role:editor,admin,super_admin'])->prefix('staff/destinations')->name('admin.destinations.')->group(function () {
+        Route::get('/', [AdminDestinationController::class, 'index'])->name('index');
+        Route::get('/create', [AdminDestinationController::class, 'create'])->name('create');
+        Route::post('/', [AdminDestinationController::class, 'store'])->name('store');
+        Route::get('/{destination}/edit', [AdminDestinationController::class, 'edit'])->name('edit');
+        Route::put('/{destination}', [AdminDestinationController::class, 'update'])->name('update');
+        Route::delete('/{destination}', [AdminDestinationController::class, 'destroy'])->name('destroy');
     });
 });

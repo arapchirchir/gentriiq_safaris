@@ -11,6 +11,10 @@
                     Manage safari itineraries, pricing tiers, and published visibility.
                 </p>
             </div>
+            <a href="{{ route('admin.tours.create') }}"
+                class="inline-flex items-center gap-1.5 rounded-sm bg-[#D96B27] px-4 py-2 text-xs font-bold text-white shadow-xs hover:bg-[#BF5A1B]">
+                + New Tour
+            </a>
         </div>
 
         <!-- Status Filter Tabs -->

@@ -1,4 +1,4 @@
-<x-layouts.public :title="$tour->title" :description="$tour->short_description" :ogImage="$tour->hero_image">
+<x-layouts.public :title="$tour->meta_title ?: $tour->title" :description="$tour->meta_description ?: $tour->short_description" :ogImage="$tour->hero_image">
     <div class="bg-[#FAF6F0] py-12 dark:bg-[#180D08] sm:py-16">
         <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <nav aria-label="Breadcrumb" class="mb-8 text-sm text-[#6E635C] dark:text-[#FAF6F0]/70">
@@ -54,8 +54,8 @@
                         <p class="text-xs font-bold uppercase tracking-wider text-[#D96B27]">The journey</p>
                         <h1 class="mt-2 text-3xl font-extrabold text-[#211915] dark:text-white sm:text-4xl">
                             {{ $tour->title }}</h1>
-                        <p class="mt-5 text-base leading-7 text-[#6E635C] dark:text-[#FAF6F0]/70">
-                            {{ $tour->description ?: $tour->short_description }}</p>
+                        <x-rich-text :content="$tour->description ?: $tour->short_description"
+                            class="mt-5 text-base leading-7 text-[#6E635C] dark:text-[#FAF6F0]/70" />
                     </section>
 
                     @if (!empty($tour->highlights))

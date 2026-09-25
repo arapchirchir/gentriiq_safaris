@@ -18,8 +18,8 @@
                     @endif
                     <h1 class="mt-2 text-4xl font-extrabold text-[#211915] dark:text-white sm:text-5xl">
                         {{ $destination->name }}</h1>
-                    <p class="mt-5 text-base leading-7 text-[#6E635C] dark:text-[#FAF6F0]/70">
-                        {{ $destination->description ?: $destination->summary }}</p>
+                    <x-rich-text :content="$destination->description ?: $destination->summary"
+                            class="mt-5 text-base leading-7 text-[#6E635C] dark:text-[#FAF6F0]/70" />
                     <div class="mt-7 flex flex-wrap gap-3">
                         <x-button href="{{ route('plan.create', ['destination' => $destination->slug]) }}"
                             variant="primary" size="lg">

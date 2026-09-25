@@ -54,27 +54,27 @@
 
             <!-- Desktop Navigation Links -->
             <nav class="hidden items-center gap-8 lg:flex" aria-label="Main Navigation">
-                <a href="#safaris"
+                <a href="{{ route('home') }}#safaris"
                     class="text-sm font-medium text-[#211915] transition-colors hover:text-[#D96B27] focus-visible:outline-2 focus-visible:outline-[#D96B27] dark:text-[#FAF6F0] dark:hover:text-[#D96B27]">
                     Safaris
                 </a>
-                <a href="#destinations"
+                <a href="{{ route('home') }}#destinations"
                     class="text-sm font-medium text-[#211915] transition-colors hover:text-[#D96B27] focus-visible:outline-2 focus-visible:outline-[#D96B27] dark:text-[#FAF6F0] dark:hover:text-[#D96B27]">
                     Destinations
                 </a>
-                <a href="#experiences"
+                <a href="{{ route('home') }}#experiences"
                     class="text-sm font-medium text-[#211915] transition-colors hover:text-[#D96B27] focus-visible:outline-2 focus-visible:outline-[#D96B27] dark:text-[#FAF6F0] dark:hover:text-[#D96B27]">
                     Experiences
                 </a>
-                <a href="#why-gentriiq"
+                <a href="{{ route('home') }}#why-gentriiq"
                     class="text-sm font-medium text-[#211915] transition-colors hover:text-[#D96B27] focus-visible:outline-2 focus-visible:outline-[#D96B27] dark:text-[#FAF6F0] dark:hover:text-[#D96B27]">
                     Why Gentriiq
                 </a>
-                <a href="#about"
+                <a href="{{ route('about') }}"
                     class="text-sm font-medium text-[#211915] transition-colors hover:text-[#D96B27] focus-visible:outline-2 focus-visible:outline-[#D96B27] dark:text-[#FAF6F0] dark:hover:text-[#D96B27]">
                     About
                 </a>
-                <a href="#contact"
+                <a href="{{ route('home') }}#contact"
                     class="text-sm font-medium text-[#211915] transition-colors hover:text-[#D96B27] focus-visible:outline-2 focus-visible:outline-[#D96B27] dark:text-[#FAF6F0] dark:hover:text-[#D96B27]">
                     Contact
                 </a>
@@ -136,27 +136,27 @@
             x-transition:leave-end="opacity-0 -translate-y-2" @click.away="mobileMenuOpen = false"
             class="min-h-full border-b border-[#24140E]/10 bg-[#FAF6F0] p-6 shadow-xl dark:border-white/10 dark:bg-[#180D08]">
             <nav class="space-y-4" aria-label="Mobile Navigation">
-                <a href="#safaris" @click="mobileMenuOpen = false"
+                <a href="{{ route('home') }}#safaris" @click="mobileMenuOpen = false"
                     class="block rounded-sm px-3 py-2.5 text-base font-semibold text-[#211915] transition-colors hover:bg-[#D96B27]/10 hover:text-[#D96B27] dark:text-[#FAF6F0]">
                     Safaris
                 </a>
-                <a href="#destinations" @click="mobileMenuOpen = false"
+                <a href="{{ route('home') }}#destinations" @click="mobileMenuOpen = false"
                     class="block rounded-sm px-3 py-2.5 text-base font-semibold text-[#211915] transition-colors hover:bg-[#D96B27]/10 hover:text-[#D96B27] dark:text-[#FAF6F0]">
                     Destinations
                 </a>
-                <a href="#experiences" @click="mobileMenuOpen = false"
+                <a href="{{ route('home') }}#experiences" @click="mobileMenuOpen = false"
                     class="block rounded-sm px-3 py-2.5 text-base font-semibold text-[#211915] transition-colors hover:bg-[#D96B27]/10 hover:text-[#D96B27] dark:text-[#FAF6F0]">
                     Experiences
                 </a>
-                <a href="#why-gentriiq" @click="mobileMenuOpen = false"
+                <a href="{{ route('home') }}#why-gentriiq" @click="mobileMenuOpen = false"
                     class="block rounded-sm px-3 py-2.5 text-base font-semibold text-[#211915] transition-colors hover:bg-[#D96B27]/10 hover:text-[#D96B27] dark:text-[#FAF6F0]">
                     Why Gentriiq
                 </a>
-                <a href="#about" @click="mobileMenuOpen = false"
+                <a href="{{ route('about') }}" @click="mobileMenuOpen = false"
                     class="block rounded-sm px-3 py-2.5 text-base font-semibold text-[#211915] transition-colors hover:bg-[#D96B27]/10 hover:text-[#D96B27] dark:text-[#FAF6F0]">
                     About Us
                 </a>
-                <a href="#contact" @click="mobileMenuOpen = false"
+                <a href="{{ route('home') }}#contact" @click="mobileMenuOpen = false"
                     class="block rounded-sm px-3 py-2.5 text-base font-semibold text-[#211915] transition-colors hover:bg-[#D96B27]/10 hover:text-[#D96B27] dark:text-[#FAF6F0]">
                     Contact
                 </a>

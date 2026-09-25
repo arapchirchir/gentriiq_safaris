@@ -36,7 +36,11 @@ class Destination extends Model
     {
         static::creating(function (Destination $destination): void {
             if (blank($destination->slug)) {
-                $destination->slug = Str::slug($destination->name);
+                $base = Str::limit(Str::slug($destination->name), 220, '') ?: 'destination';
+                $destination->slug = $base;
+                while (static::where('slug', $destination->slug)->exists()) {
+                    $destination->slug = $base.'-'.Str::lower(Str::random(8));
+                }
             }
         });
     }

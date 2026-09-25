@@ -60,7 +60,11 @@ class Tour extends Model
     {
         static::creating(function (Tour $tour): void {
             if (blank($tour->slug)) {
-                $tour->slug = Str::slug($tour->title);
+                $base = Str::limit(Str::slug($tour->title), 220, '') ?: 'tour';
+                $tour->slug = $base;
+                while (static::where('slug', $tour->slug)->exists()) {
+                    $tour->slug = $base.'-'.Str::lower(Str::random(8));
+                }
             }
         });
     }
@@ -100,9 +104,9 @@ class Tour extends Model
             'EUR' => '€',
             'GBP' => '£',
             'KES' => 'KES ',
-            default => $this->currency . ' ',
+            default => $this->currency.' ',
         };
 
-        return $symbol . number_format((float) $this->starting_price, 0);
+        return $symbol.number_format((float) $this->starting_price, fmod((float) $this->starting_price, 1) === 0.0 ? 0 : 2);
     }
 }

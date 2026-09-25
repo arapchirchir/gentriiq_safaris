@@ -61,17 +61,17 @@
             <div class="space-y-4">
                 <h3 class="text-sm font-semibold uppercase tracking-wider text-[#D96B27]">Featured Safaris</h3>
                 <ul class="space-y-2.5 text-sm text-[#FAF6F0]/75">
-                    <li><a href="#safaris" class="transition-colors hover:text-[#FAF6F0]">5-Day Maasai Mara & Nakuru</a>
+                    <li><a href="{{ route('home') }}#safaris" class="transition-colors hover:text-[#FAF6F0]">5-Day Maasai Mara & Nakuru</a>
                     </li>
-                    <li><a href="#safaris" class="transition-colors hover:text-[#FAF6F0]">7-Day Kenya Classic Safari</a>
+                    <li><a href="{{ route('home') }}#safaris" class="transition-colors hover:text-[#FAF6F0]">7-Day Kenya Classic Safari</a>
                     </li>
-                    <li><a href="#safaris" class="transition-colors hover:text-[#FAF6F0]">4-Day Amboseli &
+                    <li><a href="{{ route('home') }}#safaris" class="transition-colors hover:text-[#FAF6F0]">4-Day Amboseli &
                             Kilimanjaro</a></li>
-                    <li><a href="#safaris" class="transition-colors hover:text-[#FAF6F0]">10-Day Kenya & Tanzania</a>
+                    <li><a href="{{ route('home') }}#safaris" class="transition-colors hover:text-[#FAF6F0]">10-Day Kenya & Tanzania</a>
                     </li>
-                    <li><a href="#safaris" class="transition-colors hover:text-[#FAF6F0]">3-Day Samburu Wilderness</a>
+                    <li><a href="{{ route('home') }}#safaris" class="transition-colors hover:text-[#FAF6F0]">3-Day Samburu Wilderness</a>
                     </li>
-                    <li><a href="#safaris" class="transition-colors hover:text-[#FAF6F0]">Private Custom Safaris</a>
+                    <li><a href="{{ route('home') }}#safaris" class="transition-colors hover:text-[#FAF6F0]">Private Custom Safaris</a>
                     </li>
                 </ul>
             </div>
@@ -80,17 +80,17 @@
             <div class="space-y-4">
                 <h3 class="text-sm font-semibold uppercase tracking-wider text-[#D96B27]">Destinations</h3>
                 <ul class="space-y-2.5 text-sm text-[#FAF6F0]/75">
-                    <li><a href="#destinations" class="transition-colors hover:text-[#FAF6F0]">Maasai Mara Reserve</a>
+                    <li><a href="{{ route('home') }}#destinations" class="transition-colors hover:text-[#FAF6F0]">Maasai Mara Reserve</a>
                     </li>
-                    <li><a href="#destinations" class="transition-colors hover:text-[#FAF6F0]">Amboseli National
+                    <li><a href="{{ route('home') }}#destinations" class="transition-colors hover:text-[#FAF6F0]">Amboseli National
                             Park</a></li>
-                    <li><a href="#destinations" class="transition-colors hover:text-[#FAF6F0]">Serengeti &
+                    <li><a href="{{ route('home') }}#destinations" class="transition-colors hover:text-[#FAF6F0]">Serengeti &
                             Ngorongoro</a></li>
-                    <li><a href="#destinations" class="transition-colors hover:text-[#FAF6F0]">Samburu & Buffalo
+                    <li><a href="{{ route('home') }}#destinations" class="transition-colors hover:text-[#FAF6F0]">Samburu & Buffalo
                             Springs</a></li>
-                    <li><a href="#destinations" class="transition-colors hover:text-[#FAF6F0]">Lake Nakuru &
+                    <li><a href="{{ route('home') }}#destinations" class="transition-colors hover:text-[#FAF6F0]">Lake Nakuru &
                             Naivasha</a></li>
-                    <li><a href="#destinations" class="transition-colors hover:text-[#FAF6F0]">Diani Beach & Coast</a>
+                    <li><a href="{{ route('home') }}#destinations" class="transition-colors hover:text-[#FAF6F0]">Diani Beach & Coast</a>
                     </li>
                 </ul>
             </div>
@@ -99,17 +99,17 @@
             <div class="space-y-4">
                 <h3 class="text-sm font-semibold uppercase tracking-wider text-[#D96B27]">Experiences</h3>
                 <ul class="space-y-2.5 text-sm text-[#FAF6F0]/75">
-                    <li><a href="#experiences" class="transition-colors hover:text-[#FAF6F0]">The Big Five
+                    <li><a href="{{ route('home') }}#experiences" class="transition-colors hover:text-[#FAF6F0]">The Big Five
                             Expeditions</a></li>
-                    <li><a href="#experiences" class="transition-colors hover:text-[#FAF6F0]">Great Migration
+                    <li><a href="{{ route('home') }}#experiences" class="transition-colors hover:text-[#FAF6F0]">Great Migration
                             Safaris</a></li>
-                    <li><a href="#experiences" class="transition-colors hover:text-[#FAF6F0]">Luxury Honeymoon
+                    <li><a href="{{ route('home') }}#experiences" class="transition-colors hover:text-[#FAF6F0]">Luxury Honeymoon
                             Holidays</a></li>
-                    <li><a href="#experiences" class="transition-colors hover:text-[#FAF6F0]">Family Friendly
+                    <li><a href="{{ route('home') }}#experiences" class="transition-colors hover:text-[#FAF6F0]">Family Friendly
                             Safaris</a></li>
-                    <li><a href="#experiences" class="transition-colors hover:text-[#FAF6F0]">Birding & Photography</a>
+                    <li><a href="{{ route('home') }}#experiences" class="transition-colors hover:text-[#FAF6F0]">Birding & Photography</a>
                     </li>
-                    <li><a href="#experiences" class="transition-colors hover:text-[#FAF6F0]">Bush to Beach Holidays</a>
+                    <li><a href="{{ route('home') }}#experiences" class="transition-colors hover:text-[#FAF6F0]">Bush to Beach Holidays</a>
                     </li>
                 </ul>
             </div>
@@ -141,6 +141,8 @@
             class="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-8 text-xs text-[#FAF6F0]/50 sm:flex-row">
             <p>&copy; {{ date('Y') }} Gentriiq Safaris & Tours. All rights reserved. Kenya &bull; East Africa.</p>
             <div class="flex items-center gap-6">
+                <a href="{{ route('about') }}" class="hover:text-white">About Us</a>
+                <span>&bull;</span>
                 <a href="#top" class="hover:text-white">Back to top &uarr;</a>
                 <span>&bull;</span>
                 <a href="{{ route('admin.dashboard') }}" class="hover:text-white">Staff Portal</a>

@@ -32,6 +32,23 @@ test('invalid credentials are rejected', function () {
     $this->assertGuest();
 });
 
+test('deactivated staff cannot sign in even with the correct password', function () {
+    $user = User::factory()->create(['is_active' => false]);
+
+    $response = $this->from('/login')->post('/login', ['email' => $user->email, 'password' => 'password']);
+
+    $response->assertRedirect('/login')->assertSessionHasErrors(['email' => 'This staff account has been deactivated.']);
+    $this->assertGuest();
+});
+
+test('deactivated status is not revealed without the correct password', function () {
+    $user = User::factory()->create(['is_active' => false]);
+
+    $this->from('/login')->post('/login', ['email' => $user->email, 'password' => 'incorrect'])
+        ->assertSessionHasErrors(['email' => __('auth.failed')]);
+    $this->assertGuest();
+});
+
 test('login requires an email and password', function () {
     $response = $this->from('/login')->post('/login', []);
 

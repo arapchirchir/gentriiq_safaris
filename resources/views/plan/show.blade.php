@@ -224,7 +224,7 @@
 
                     {{-- Unique Shareable Link Box --}}
                     <div class="mt-8 border-t border-black/10 pt-6 text-left dark:border-white/10"
-                        x-data="{ copied: false, shareUrl: '{{ $inquiry->share_url }}' }">
+                        x-data="{ copied: false, shareUrl: @js($inquiry->share_url) }">
                         <label
                             class="block text-xs font-bold uppercase tracking-wider text-[#6E635C] dark:text-[#FAF6F0]/70">
                             Your Unique Plan Link (Saved in Database)
