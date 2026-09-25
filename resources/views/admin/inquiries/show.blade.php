@@ -23,7 +23,7 @@
                         </span>
                     </div>
                     <p class="text-xs text-[#6E635C] dark:text-[#FAF6F0]/70">
-                        Reference: <span class="font-mono font-bold text-[#D96B27]">{{ $inquiry->reference }}</span> &bull; Submitted {{ $inquiry->created_at->format('M d, Y \a\t H:i') }} (EAT)
+                        Reference: <span class="font-mono font-bold text-[#D96B27]">{{ $inquiry->reference }}</span> &bull; Submitted {{ $inquiry->created_at->timezone('Africa/Nairobi')->format('M d, Y \a\t H:i') }} (EAT)
                     </p>
                 </div>
             </div>
@@ -113,7 +113,9 @@
                             <div class="rounded-sm border border-[#D96B27]/30 bg-[#D96B27]/10 p-3.5 sm:col-span-2">
                                 <span class="text-[10px] font-bold uppercase tracking-wider text-[#D96B27]">Inquired From Package</span>
                                 <p class="mt-1 font-bold text-[#211915] dark:text-white">{{ $inquiry->tour->title }} ({{ $inquiry->tour->duration_days }} Days)</p>
-                                @php($travellers = $inquiry->adults_count + $inquiry->children_count)
+                                @php
+                                    $travellers = $inquiry->adults_count + $inquiry->children_count;
+                                @endphp
                                 <p class="mt-1 text-[#211915] dark:text-white">
                                     From <span class="font-bold">{{ $inquiry->tour->formatted_price }}</span> per person
                                     &times; {{ $travellers }} {{ \Illuminate\Support\Str::plural('traveller', $travellers) }}
@@ -200,9 +202,66 @@
                 </div>
             </div>
 
-            <!-- Right Column: Status Management & Staff Internal Notes -->
+            <!-- Right Column: Follow-up History, Status & Audit -->
             <div class="space-y-6">
-                <!-- Status & Operations Update Form -->
+                @php
+                    $statusColours = [
+                        'new' => 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-400',
+                        'contacted' => 'bg-[#D96B27]/10 text-[#BF5A1B] dark:text-[#D96B27]',
+                        'quote_sent' => 'bg-amber-500/10 text-amber-700 dark:text-amber-400',
+                        'confirmed' => 'bg-blue-500/10 text-blue-700 dark:text-blue-400',
+                        'cancelled' => 'bg-rose-500/10 text-rose-700 dark:text-rose-400',
+                    ];
+                @endphp
+
+                <!-- Follow-up History (append-only, staff only) -->
+                <div class="rounded-sm border border-black/10 bg-white p-6 shadow-xs dark:border-white/10 dark:bg-[#24140E]">
+                    <div class="flex items-baseline justify-between border-b border-black/10 pb-3 dark:border-white/10">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-[#D96B27]">Follow-up History</h3>
+                        <span class="text-[11px] text-[#6E635C] dark:text-[#FAF6F0]/60">
+                            {{ $inquiry->updates->count() }} {{ \Illuminate\Support\Str::plural('update', $inquiry->updates->count()) }}
+                        </span>
+                    </div>
+
+                    @if ($inquiry->updates->isEmpty())
+                        <p class="mt-4 text-xs text-[#6E635C] dark:text-[#FAF6F0]/70">
+                            No follow-ups yet. Record each call, message or quote below so the whole team can see where this guest stands.
+                        </p>
+                    @else
+                        <ol class="mt-4 max-h-[28rem] space-y-4 overflow-y-auto pr-1">
+                            @foreach ($inquiry->updates as $update)
+                                <li class="border-l-2 border-[#D96B27]/30 pl-3">
+                                    <div class="flex flex-wrap items-center gap-1.5">
+                                        @if ($update->isStatusChange())
+                                            <span class="rounded-xs px-1.5 py-0.5 text-[10px] font-bold {{ $statusColours[$update->previous_status] ?? 'bg-black/5' }} line-through opacity-70">
+                                                {{ \App\Models\Inquiry::STATUSES[$update->previous_status]['short'] ?? $update->previous_status }}
+                                            </span>
+                                            <span class="text-[10px] text-[#6E635C]" aria-label="changed to">&rarr;</span>
+                                        @endif
+                                        <span class="rounded-xs px-1.5 py-0.5 text-[10px] font-bold {{ $statusColours[$update->status] ?? 'bg-black/5' }}">
+                                            {{ $update->status_label }}
+                                        </span>
+                                    </div>
+                                    @if ($update->note)
+                                        <p class="mt-1.5 whitespace-pre-line text-xs leading-relaxed text-[#211915] dark:text-white">{{ $update->note }}</p>
+                                    @elseif ($update->isStatusChange())
+                                        <p class="mt-1.5 text-xs italic text-[#6E635C] dark:text-[#FAF6F0]/60">Status changed.</p>
+                                    @endif
+                                    <p class="mt-1 text-[11px] text-[#6E635C] dark:text-[#FAF6F0]/60">
+                                        <span class="font-semibold text-[#211915] dark:text-[#FAF6F0]/90">{{ $update->author_name }}</span>
+                                        @if ($update->author_role)
+                                            ({{ $update->author_role }})
+                                        @endif
+                                        &bull;
+                                        <time datetime="{{ $update->created_at->toIso8601String() }}">{{ $update->created_at->timezone('Africa/Nairobi')->format('d M Y, H:i') }} EAT</time>
+                                    </p>
+                                </li>
+                            @endforeach
+                        </ol>
+                    @endif
+                </div>
+
+                <!-- Status & Follow-up Form -->
                 <div class="rounded-sm border border-black/10 bg-white p-6 shadow-xs dark:border-white/10 dark:bg-[#24140E]">
                     <h3 class="border-b border-black/10 pb-3 text-xs font-bold uppercase tracking-wider text-[#D96B27] dark:border-white/10">
                         Inquiry Status & Operations
@@ -214,33 +273,32 @@
 
                         <div>
                             <label for="status" class="block text-xs font-bold uppercase tracking-wider text-[#6E635C] dark:text-[#FAF6F0]/70">
-                                Current Status
+                                Status
                             </label>
                             <select id="status" name="status"
                                 class="mt-1.5 w-full rounded-sm border border-black/20 bg-white px-3 py-2 text-xs font-semibold text-[#211915] outline-none focus:border-[#D96B27] focus:ring-1 focus:ring-[#D96B27] dark:border-white/20 dark:bg-[#180D08] dark:text-white">
-                                <option value="new" @selected($inquiry->status === 'new')>New (Pending Contact)</option>
-                                <option value="contacted" @selected($inquiry->status === 'contacted')>Contacted (Discussion Active)</option>
-                                <option value="quote_sent" @selected($inquiry->status === 'quote_sent')>Quote Sent (Proposal Shared)</option>
-                                <option value="confirmed" @selected($inquiry->status === 'confirmed')>Confirmed (Deposit Paid)</option>
-                                <option value="cancelled" @selected($inquiry->status === 'cancelled')>Cancelled / Inactive</option>
+                                @foreach (\App\Models\Inquiry::STATUSES as $value => $status)
+                                    <option value="{{ $value }}" @selected(old('status', $inquiry->status) === $value)>{{ $status['label'] }}</option>
+                                @endforeach
                             </select>
                         </div>
 
                         <div>
-                            <label for="internal_notes" class="block text-xs font-bold uppercase tracking-wider text-[#6E635C] dark:text-[#FAF6F0]/70">
-                                Internal Staff Notes
+                            <label for="note" class="block text-xs font-bold uppercase tracking-wider text-[#6E635C] dark:text-[#FAF6F0]/70">
+                                Follow-up Note
                             </label>
-                            <textarea id="internal_notes" name="internal_notes" rows="6"
-                                placeholder="Add internal notes about pricing discussions, safari vehicle allocation, lodge availability..."
-                                class="mt-1.5 w-full rounded-sm border border-black/20 bg-white p-3 text-xs text-[#211915] outline-none focus:border-[#D96B27] focus:ring-1 focus:ring-[#D96B27] dark:border-white/20 dark:bg-[#180D08] dark:text-white">{{ old('internal_notes', $inquiry->internal_notes) }}</textarea>
+                            <textarea id="note" name="note" rows="4" maxlength="5000"
+                                placeholder="e.g. Did not pick up the call. Will try again at 4pm."
+                                class="mt-1.5 w-full rounded-sm border border-black/20 bg-white p-3 text-xs text-[#211915] outline-none focus:border-[#D96B27] focus:ring-1 focus:ring-[#D96B27] dark:border-white/20 dark:bg-[#180D08] dark:text-white">{{ old('note') }}</textarea>
+                            <x-form-error name="note" />
                             <p class="mt-1 text-[11px] text-[#6E635C] dark:text-[#FAF6F0]/60">
-                                Visible only to Gentriiq staff and sales team.
+                                Saved under your name with the time. Visible only to Gentriiq staff, never to the guest.
                             </p>
                         </div>
 
                         <button type="submit"
                             class="w-full rounded-sm bg-[#D96B27] py-2.5 text-xs font-bold text-white shadow-xs transition-colors hover:bg-[#BF5A1B]">
-                            Save Status & Notes
+                            Save Update
                         </button>
                     </form>
                 </div>
@@ -252,7 +310,7 @@
                         <li>Reference: <strong class="text-[#211915] dark:text-white">{{ $inquiry->reference }}</strong></li>
                         <li>Token: <span class="font-mono">{{ $inquiry->token }}</span></li>
                         <li>IP Address: {{ $inquiry->ip_address ?? 'N/A' }}</li>
-                        <li>Last Updated: {{ $inquiry->updated_at->format('M d, Y H:i') }}</li>
+                        <li>Last Updated: {{ $inquiry->updated_at->timezone('Africa/Nairobi')->format('M d, Y H:i') }} (EAT)</li>
                     </ul>
                 </div>
             </div>

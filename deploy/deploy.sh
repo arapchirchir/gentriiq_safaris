@@ -13,7 +13,7 @@ grep -qx 'APP_ENV=production' .env || { echo "ABORT: APP_ENV must be production"
 grep -qx 'APP_DEBUG=false' .env || { echo "ABORT: APP_DEBUG must be false"; exit 1; }
 
 echo "Maintenance mode enabled."
-php artisan down --message="The site is under maintenance. Please check back later." --retry
+php artisan down
 
 echo "1. Pulling latest code..."
 git pull origin master
@@ -29,7 +29,7 @@ echo "3. Running migrations..."
 php artisan migrate --force
 
 echo "4. Running seeders..."
-php artisan db:seed --force
+# php artisan db:seed --force
 
 echo "5. Clearing old caches..."
 php artisan optimize:clear

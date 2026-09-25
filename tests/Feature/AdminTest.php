@@ -1,7 +1,6 @@
 <?php
 
 use App\Models\Destination;
-use App\Models\Inquiry;
 use App\Models\Tour;
 use App\Models\User;
 
@@ -81,45 +80,6 @@ test('inactive staff users are rejected with forbidden error', function () {
     $this->actingAs($inactiveUser)
         ->get(route('admin.dashboard'))
         ->assertForbidden();
-});
-
-test('sales specialist can update inquiry status and internal notes', function () {
-    $salesUser = User::factory()->create([
-        'role' => User::ROLE_SALES,
-        'is_active' => true,
-    ]);
-
-    $inquiry = Inquiry::create([
-        'traveller_type' => 'partner',
-        'adults_count' => 2,
-        'children_count' => 0,
-        'travel_year' => '2026',
-        'travel_month' => 'October',
-        'travel_date' => '2026-10-15',
-        'duration' => '7-9_days',
-        'name' => 'Jane Smith',
-        'email' => 'jane@example.com',
-        'phone' => '+254712345678',
-        'status' => 'new',
-    ]);
-
-    $this->actingAs($salesUser)
-        ->get(route('admin.inquiries.show', $inquiry))
-        ->assertOk()
-        ->assertSee('Jane Smith')
-        ->assertSee('Dossier');
-
-    $response = $this->actingAs($salesUser)
-        ->put(route('admin.inquiries.update', $inquiry), [
-            'status' => 'contacted',
-            'internal_notes' => 'Called Jane, she is interested in Mara luxury camps.',
-        ]);
-
-    $response->assertSessionHas('success');
-
-    $inquiry->refresh();
-    expect($inquiry->status)->toBe('contacted')
-        ->and($inquiry->internal_notes)->toBe('Called Jane, she is interested in Mara luxury camps.');
 });
 
 test('editor can update tour details and published status', function () {

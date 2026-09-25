@@ -135,7 +135,7 @@
                                 <td class="py-3.5 px-4 text-right space-x-1.5 whitespace-nowrap">
                                     <a href="{{ route('admin.inquiries.show', $inquiry) }}"
                                         class="inline-flex items-center rounded-sm bg-[#D96B27] px-2.5 py-1 text-[11px] font-bold text-white hover:bg-[#BF5A1B]">
-                                        Open Dossier
+                                        Open Plan
                                     </a>
                                     @if ($inquiry->phone)
                                         @php

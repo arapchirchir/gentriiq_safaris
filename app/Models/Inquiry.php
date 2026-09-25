@@ -7,11 +7,23 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
 class Inquiry extends Model
 {
     use HasFactory;
+
+    /**
+     * Inquiry pipeline statuses: 'label' for the staff dropdown, 'short' for badges and history.
+     */
+    public const STATUSES = [
+        'new' => ['label' => 'New (Pending Contact)', 'short' => 'New'],
+        'contacted' => ['label' => 'Contacted (Discussion Active)', 'short' => 'Contacted'],
+        'quote_sent' => ['label' => 'Quote Sent (Proposal Shared)', 'short' => 'Quote sent'],
+        'confirmed' => ['label' => 'Confirmed (Deposit Paid)', 'short' => 'Confirmed'],
+        'cancelled' => ['label' => 'Cancelled / Inactive', 'short' => 'Cancelled'],
+    ];
 
     /**
      * Optional per-person budget brackets offered in the trip planner (USD, excluding international flights).
@@ -49,8 +61,6 @@ class Inquiry extends Model
         'user_agent',
     ];
 
-    // internal_notes is intentionally absent from $fillable — only assigned explicitly in staff controllers.
-
     protected function casts(): array
     {
         return [
@@ -68,6 +78,14 @@ class Inquiry extends Model
     public function destination(): BelongsTo
     {
         return $this->belongsTo(Destination::class);
+    }
+
+    /**
+     * Staff follow-up history, newest first. Never exposed on the guest-facing plan page.
+     */
+    public function updates(): HasMany
+    {
+        return $this->hasMany(InquiryUpdate::class)->latest()->latest('id');
     }
 
     public function experiences(): BelongsToMany
