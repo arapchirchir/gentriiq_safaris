@@ -66,14 +66,8 @@ echo "4. Running seeders..."
 echo "5. Clearing old caches..."
 php artisan optimize:clear
 
-echo "6. Caching configuration..."
-php artisan config:cache
-
-echo "7. Caching routes..."
-php artisan route:cache
-
-echo "8. Caching views..."
-php artisan view:cache
+echo "6. Optimize configuration..."
+php artisan optimize
 
 echo "Deployment finished successfully."
 EOF
