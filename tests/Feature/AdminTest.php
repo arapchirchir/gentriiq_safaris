@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Destination;
+use App\Models\Experience;
 use App\Models\Inquiry;
 use App\Models\Tour;
 use App\Models\User;
@@ -198,4 +199,25 @@ test('editors do not see guest inquiry details on the dashboard', function () {
         ->assertDontSee('Private Guest')
         ->assertDontSee('private.guest@example.com')
         ->assertDontSee('View All Inquiries');
+});
+
+test('admin catalogue urls use uuids while public pages keep readable slugs', function () {
+    $editor = User::factory()->create(['role' => User::ROLE_EDITOR]);
+    $tour = Tour::create(['title' => 'Uuid Safari', 'duration_days' => 2, 'duration_nights' => 1, 'starting_price' => 500, 'status' => 'published', 'published_at' => now()->subDay()]);
+    $destination = Destination::create(['name' => 'Uuid Mara', 'country' => 'Kenya']);
+    $experience = Experience::create(['name' => 'Uuid Balloon']);
+
+    foreach ([
+        [route('admin.tours.edit', $tour), $tour],
+        [route('admin.destinations.edit', $destination), $destination],
+        [route('admin.experiences.edit', $experience), $experience],
+    ] as [$url, $model]) {
+        expect($url)->toContain('/'.$model->uuid.'/edit')->not->toContain('/'.$model->id.'/edit');
+        $this->actingAs($editor)->get($url)->assertOk();
+        $this->actingAs($editor)->get(str_replace($model->uuid, (string) $model->id, $url))->assertNotFound();
+    }
+
+    expect(route('tours.show', $tour))->toEndWith('/tours/uuid-safari')
+        ->and(route('destinations.show', $destination))->toEndWith('/destinations/uuid-mara');
+    $this->get(route('tours.show', $tour))->assertOk();
 });

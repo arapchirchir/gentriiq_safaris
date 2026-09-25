@@ -47,8 +47,9 @@ Route::middleware(['auth', 'role'])->group(function () {
     // Safari plans / Inquiries Management (Sales & Admin)
     Route::middleware(['role:sales,admin,super_admin'])->prefix('staff/inquiries')->name('admin.inquiries.')->group(function () {
         Route::get('/', [AdminInquiryController::class, 'index'])->name('index');
-        Route::get('/{inquiry}', [AdminInquiryController::class, 'show'])->name('show');
-        Route::put('/{inquiry}', [AdminInquiryController::class, 'update'])->name('update');
+        // whereUuid: non-UUID values (e.g. old /staff/inquiries/1 links) 404 instead of erroring on PostgreSQL's uuid column.
+        Route::get('/{inquiry}', [AdminInquiryController::class, 'show'])->whereUuid('inquiry')->name('show');
+        Route::put('/{inquiry}', [AdminInquiryController::class, 'update'])->whereUuid('inquiry')->name('update');
     });
 
     // Tours & Packages Management (Editor & Admin)
@@ -56,9 +57,9 @@ Route::middleware(['auth', 'role'])->group(function () {
         Route::get('/', [AdminTourController::class, 'index'])->name('index');
         Route::get('/create', [AdminTourController::class, 'create'])->name('create');
         Route::post('/', [AdminTourController::class, 'store'])->name('store');
-        Route::get('/{tour}/edit', [AdminTourController::class, 'edit'])->name('edit');
-        Route::put('/{tour}', [AdminTourController::class, 'update'])->name('update');
-        Route::delete('/{tour}', [AdminTourController::class, 'destroy'])->name('destroy');
+        Route::get('/{tour}/edit', [AdminTourController::class, 'edit'])->whereUuid('tour')->name('edit');
+        Route::put('/{tour}', [AdminTourController::class, 'update'])->whereUuid('tour')->name('update');
+        Route::delete('/{tour}', [AdminTourController::class, 'destroy'])->whereUuid('tour')->name('destroy');
     });
 
     // Destinations Management (Editor & Admin)
@@ -66,9 +67,9 @@ Route::middleware(['auth', 'role'])->group(function () {
         Route::get('/', [AdminDestinationController::class, 'index'])->name('index');
         Route::get('/create', [AdminDestinationController::class, 'create'])->name('create');
         Route::post('/', [AdminDestinationController::class, 'store'])->name('store');
-        Route::get('/{destination}/edit', [AdminDestinationController::class, 'edit'])->name('edit');
-        Route::put('/{destination}', [AdminDestinationController::class, 'update'])->name('update');
-        Route::delete('/{destination}', [AdminDestinationController::class, 'destroy'])->name('destroy');
+        Route::get('/{destination}/edit', [AdminDestinationController::class, 'edit'])->whereUuid('destination')->name('edit');
+        Route::put('/{destination}', [AdminDestinationController::class, 'update'])->whereUuid('destination')->name('update');
+        Route::delete('/{destination}', [AdminDestinationController::class, 'destroy'])->whereUuid('destination')->name('destroy');
     });
 
     // Experiences Management (Editor & Admin) — drives the homepage and the trip planner
@@ -76,8 +77,8 @@ Route::middleware(['auth', 'role'])->group(function () {
         Route::get('/', [AdminExperienceController::class, 'index'])->name('index');
         Route::get('/create', [AdminExperienceController::class, 'create'])->name('create');
         Route::post('/', [AdminExperienceController::class, 'store'])->name('store');
-        Route::get('/{experience}/edit', [AdminExperienceController::class, 'edit'])->name('edit');
-        Route::put('/{experience}', [AdminExperienceController::class, 'update'])->name('update');
-        Route::delete('/{experience}', [AdminExperienceController::class, 'destroy'])->name('destroy');
+        Route::get('/{experience}/edit', [AdminExperienceController::class, 'edit'])->whereUuid('experience')->name('edit');
+        Route::put('/{experience}', [AdminExperienceController::class, 'update'])->whereUuid('experience')->name('update');
+        Route::delete('/{experience}', [AdminExperienceController::class, 'destroy'])->whereUuid('experience')->name('destroy');
     });
 });

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\HasPublicUuid;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -12,7 +13,8 @@ use Illuminate\Support\Str;
 
 class Inquiry extends Model
 {
-    use HasFactory;
+    // Staff URLs use `uuid` — never the sequential id or the guest's secret `token`.
+    use HasFactory, HasPublicUuid;
 
     /**
      * Inquiry pipeline statuses: 'label' for the staff dropdown, 'short' for badges and history.

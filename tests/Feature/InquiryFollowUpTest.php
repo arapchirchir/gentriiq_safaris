@@ -125,3 +125,20 @@ test('the inquiry page does not display the private plan token or the guest ip a
         ->and($html)->not->toContain('102.0.29.92')
         ->and($html)->not->toContain('Audit Information');
 });
+
+test('staff inquiry urls use the uuid, not the numeric id or the guest token', function () {
+    $sales = User::factory()->create(['role' => User::ROLE_SALES]);
+    $inquiry = followUpInquiry();
+
+    expect($inquiry->uuid)->toMatch('/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/')
+        ->and($inquiry->uuid)->not->toBe($inquiry->token)
+        ->and(route('admin.inquiries.show', $inquiry))->toEndWith('/staff/inquiries/'.$inquiry->uuid);
+
+    $this->actingAs($sales)->get('/staff/inquiries/'.$inquiry->uuid)->assertOk();
+    $this->actingAs($sales)->get('/staff/inquiries/'.$inquiry->id)->assertNotFound();
+    $this->actingAs($sales)->get('/staff/inquiries/'.$inquiry->token)->assertNotFound();
+
+    $this->actingAs($sales)->get(route('admin.inquiries.index'))
+        ->assertSee(route('admin.inquiries.show', $inquiry), false)
+        ->assertDontSee('/staff/inquiries/'.$inquiry->id.'"', false);
+});
