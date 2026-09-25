@@ -3,6 +3,14 @@ set -e
 
 echo "Starting deployment..."
 
+# The server does not build front-end assets, so the committed public/build must match the current code.
+echo "Checking front-end build is committed..."
+npm run build --silent
+if [ -n "$(git status --porcelain -- public/build)" ]; then
+    echo "ABORT: public/build changed after rebuilding. Commit and push the new build, then deploy again."
+    exit 1
+fi
+
 ssh evntfy << 'EOF'
 set -e
 
@@ -14,6 +22,8 @@ grep -qx 'APP_DEBUG=false' .env || { echo "ABORT: APP_DEBUG must be false"; exit
 
 echo "Maintenance mode enabled."
 php artisan down
+# Always bring the site back up, even if a later step fails.
+trap 'php artisan up' EXIT
 
 echo "1. Pulling latest code..."
 git pull origin master
@@ -44,6 +54,4 @@ echo "8. Caching views..."
 php artisan view:cache
 
 echo "Deployment finished successfully."
-
-php artisan up
 EOF

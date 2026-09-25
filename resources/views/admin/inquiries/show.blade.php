@@ -202,7 +202,7 @@
                 </div>
             </div>
 
-            <!-- Right Column: Follow-up History, Status & Audit -->
+            <!-- Right Column: Follow-up History & Status -->
             <div class="space-y-6">
                 @php
                     $statusColours = [
@@ -303,16 +303,6 @@
                     </form>
                 </div>
 
-                <!-- Inquiry Metadata Card -->
-                <div class="rounded-sm border border-black/10 bg-[#FAF6F0] p-4 text-[11px] dark:border-white/10 dark:bg-[#180D08]">
-                    <span class="font-bold uppercase tracking-wider text-[#6E635C] dark:text-[#FAF6F0]/60">Audit Information</span>
-                    <ul class="mt-2 space-y-1.5 text-[#6E635C] dark:text-[#FAF6F0]/70">
-                        <li>Reference: <strong class="text-[#211915] dark:text-white">{{ $inquiry->reference }}</strong></li>
-                        <li>Token: <span class="font-mono">{{ $inquiry->token }}</span></li>
-                        <li>IP Address: {{ $inquiry->ip_address ?? 'N/A' }}</li>
-                        <li>Last Updated: {{ $inquiry->updated_at->timezone('Africa/Nairobi')->format('M d, Y H:i') }} (EAT)</li>
-                    </ul>
-                </div>
             </div>
         </div>
     </div>

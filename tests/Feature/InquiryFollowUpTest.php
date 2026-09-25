@@ -111,3 +111,17 @@ test('invalid statuses are rejected', function () {
     $this->actingAs($sales)->put(route('admin.inquiries.update', followUpInquiry()), ['status' => 'paid_in_full', 'note' => 'x'])
         ->assertSessionHasErrors('status');
 });
+
+test('the inquiry page does not display the private plan token or the guest ip address', function () {
+    $sales = User::factory()->create(['role' => User::ROLE_SALES]);
+    $inquiry = followUpInquiry();
+    $inquiry->forceFill(['ip_address' => '102.0.29.92'])->save();
+
+    $html = $this->actingAs($sales)->get(route('admin.inquiries.show', $inquiry))->assertOk()->getContent();
+
+    // The token may only appear inside the "View Guest Proposal Page" link, never as visible text.
+    expect(substr_count($html, $inquiry->token))->toBe(1)
+        ->and($html)->toContain('href="'.route('plan.show', ['token' => $inquiry->token]).'"')
+        ->and($html)->not->toContain('102.0.29.92')
+        ->and($html)->not->toContain('Audit Information');
+});
