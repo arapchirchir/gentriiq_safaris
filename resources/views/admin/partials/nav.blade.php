@@ -1,14 +1,14 @@
 {{-- Staff navigation shared by the desktop sidebar and the mobile drawer. Expects $navigation. --}}
 <nav class="flex min-h-full flex-col gap-6 px-4 py-6">
     <div>
-        <p class="px-2.5 text-[11px] font-bold uppercase tracking-wider text-white/40">Core Operations</p>
+        <p class="px-2.5 text-[11px] font-bold uppercase tracking-wider text-[#6E635C]/70 dark:text-white/40">Core Operations</p>
         <ul role="list" class="mt-2 space-y-1">
             @foreach ($navigation as $item)
                 @php($active = request()->routeIs($item['active']))
                 <li>
                     <a href="{{ route($item['route']) }}" @if ($mobile ?? false) @click="mobileSidebarOpen = false" @endif
                         @if ($active) aria-current="page" @endif
-                        class="{{ $active ? 'bg-[#D96B27] font-bold text-white shadow-xs' : 'text-[#FAF6F0]/70 hover:bg-white/5 hover:text-white' }} flex items-center justify-between gap-3 rounded-sm px-2.5 py-2.5 text-xs font-semibold focus-visible:outline-2 focus-visible:outline-[#D96B27]">
+                        class="{{ $active ? 'bg-[#D96B27] font-bold text-white shadow-xs' : 'text-[#6E635C] hover:bg-black/5 hover:text-[#211915] dark:text-[#FAF6F0]/70 dark:hover:bg-white/5 dark:hover:text-white' }} flex items-center justify-between gap-3 rounded-sm px-2.5 py-2.5 text-xs font-semibold focus-visible:outline-2 focus-visible:outline-[#D96B27]">
                         <span class="flex items-center gap-3">
                             <svg class="size-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                                 @foreach ($item['icon'] as $path)

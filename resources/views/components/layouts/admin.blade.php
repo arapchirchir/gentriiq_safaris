@@ -65,10 +65,10 @@
 
     <div class="flex h-full flex-col">
         <!-- Top Navigation -->
-        <header class="z-40 flex h-16 shrink-0 items-center gap-3 border-b border-white/10 bg-[#24140E] px-4 text-[#FAF6F0] sm:px-6">
+        <header class="z-40 flex h-16 shrink-0 items-center gap-3 border-b border-black/10 bg-white px-4 text-[#211915] shadow-xs sm:px-6 dark:border-white/10 dark:bg-[#24140E] dark:text-[#FAF6F0]">
             <button type="button" @click="mobileSidebarOpen = !mobileSidebarOpen" :aria-expanded="mobileSidebarOpen"
                 aria-controls="admin-sidebar-mobile"
-                class="-ml-1 rounded-sm p-2 text-[#FAF6F0]/80 hover:bg-white/10 hover:text-white focus-visible:outline-2 focus-visible:outline-[#D96B27] lg:hidden">
+                class="-ml-1 rounded-sm p-2 text-[#6E635C] hover:bg-black/5 hover:text-[#211915] focus-visible:outline-2 focus-visible:outline-[#D96B27] lg:hidden dark:text-[#FAF6F0]/80 dark:hover:bg-white/10 dark:hover:text-white">
                 <span class="sr-only">Toggle navigation</span>
                 <svg class="size-5" fill="none" viewBox="0 0 24 24" stroke-width="1.75" stroke="currentColor" aria-hidden="true">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
@@ -77,13 +77,15 @@
 
             <a href="{{ route('admin.dashboard') }}" class="flex shrink-0 items-center focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#D96B27]"
                 aria-label="Gentriiq Safaris & Tours — staff dashboard">
-                <img src="{{ asset('assets/logo-dark.png') }}" alt="Gentriiq Safaris & Tours" width="1259" height="821"
-                    class="h-11 w-auto object-contain">
+                <img src="{{ asset('assets/logo-light.png') }}" alt="Gentriiq Safaris & Tours" width="1259" height="821"
+                    class="h-11 w-auto object-contain dark:hidden">
+                <img src="{{ asset('assets/logo-dark.png') }}" alt="" aria-hidden="true" width="1259" height="821"
+                    class="hidden h-11 w-auto object-contain dark:block">
             </a>
 
             <div class="ml-auto flex items-center gap-2 sm:gap-3">
                 <button type="button" @click="toggleTheme()" aria-label="Toggle dark mode"
-                    class="inline-flex size-9 items-center justify-center rounded-sm border border-white/15 text-[#FAF6F0] transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-[#D96B27]">
+                    class="inline-flex size-9 items-center justify-center rounded-sm border border-black/15 text-[#211915] transition-colors hover:bg-black/5 focus-visible:outline-2 focus-visible:outline-[#D96B27] dark:border-white/15 dark:text-[#FAF6F0] dark:hover:bg-white/10">
                     {{-- CSS-driven so the correct icon shows on first paint. --}}
                     <svg class="size-4 dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -99,12 +101,12 @@
                 <div class="relative" x-data="{ open: false }" @click.outside="open = false" @keydown.escape.window="open = false">
                     <button type="button" @click="open = !open" :aria-expanded="open" aria-expanded="false" aria-haspopup="menu"
                         aria-controls="admin-user-menu"
-                        class="flex items-center gap-2 rounded-sm py-1 pr-2 pl-1 text-left transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-[#D96B27]">
+                        class="flex items-center gap-2 rounded-sm py-1 pr-2 pl-1 text-left transition-colors hover:bg-black/5 focus-visible:outline-2 focus-visible:outline-[#D96B27] dark:hover:bg-white/10">
                         <span class="flex size-8 items-center justify-center rounded-full bg-[#D96B27] text-sm font-bold text-white">
                             {{ strtoupper(substr($user->name, 0, 1)) }}
                         </span>
-                        <span class="hidden max-w-40 truncate text-xs font-bold text-white sm:block">{{ $user->name }}</span>
-                        <svg class="size-4 text-[#FAF6F0]/70 transition-transform" :class="open && 'rotate-180'" fill="none"
+                        <span class="hidden max-w-40 truncate text-xs font-bold text-[#211915] sm:block dark:text-white">{{ $user->name }}</span>
+                        <svg class="size-4 text-[#6E635C] transition-transform dark:text-[#FAF6F0]/70" :class="open && 'rotate-180'" fill="none"
                             viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
                             <path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
                         </svg>
@@ -146,7 +148,7 @@
 
         <div class="relative flex min-h-0 flex-1">
             <!-- Sidebar (desktop) -->
-            <aside class="hidden w-64 shrink-0 overflow-y-auto border-r border-white/10 bg-[#24140E] lg:block"
+            <aside class="hidden w-64 shrink-0 overflow-y-auto border-r border-black/10 bg-white lg:block dark:border-white/10 dark:bg-[#24140E]"
                 aria-label="Staff navigation">
                 @include('admin.partials.nav', ['navigation' => $navigation])
             </aside>
@@ -159,7 +161,7 @@
                     x-transition:enter="transition ease-out duration-200" x-transition:enter-start="-translate-x-full"
                     x-transition:enter-end="translate-x-0" x-transition:leave="transition ease-in duration-150"
                     x-transition:leave-start="translate-x-0" x-transition:leave-end="-translate-x-full"
-                    class="relative h-full w-72 max-w-[85%] overflow-y-auto bg-[#24140E] shadow-xl" aria-label="Staff navigation">
+                    class="relative h-full w-72 max-w-[85%] overflow-y-auto bg-white shadow-xl dark:bg-[#24140E]" aria-label="Staff navigation">
                     @include('admin.partials.nav', ['navigation' => $navigation, 'mobile' => true])
                 </aside>
             </div>

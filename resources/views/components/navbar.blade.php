@@ -82,15 +82,6 @@
 
             <!-- Actions Cluster -->
             <div class="hidden items-center gap-3 sm:flex">
-                <a href="https://wa.me/254717838061?text=Hello%20Gentriiq%20Safaris,%20I%20would%20like%20to%20plan%20a%20custom%20safari"
-                    target="_blank" rel="noopener noreferrer"
-                    class="hidden items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-[#D96B27] hover:text-[#BF5A1B] focus-visible:outline-2 focus-visible:outline-[#D96B27] xl:inline-flex">
-                    <svg class="size-4 fill-current" viewBox="0 0 24 24" aria-hidden="true">
-                        <path
-                            d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.668-.699c.969.54 1.761.815 2.791.815 3.179 0 5.768-2.587 5.769-5.767.001-3.18-2.586-5.767-5.768-5.767zm9.969 5.765c0 5.518-4.482 10-10 10-1.748 0-3.385-.45-4.819-1.242l-5.181 1.357 1.383-5.053c-.886-1.488-1.383-3.228-1.383-5.062 0-5.518 4.482-10 10-10 5.518 0 10 4.482 10 10z" />
-                    </svg>
-                    WhatsApp
-                </a>
 
                 <x-button href="{{ route('plan.create') }}" variant="primary" size="md">
                     <span>Plan My Safari</span>
