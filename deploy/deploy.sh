@@ -1,14 +1,38 @@
 #!/bin/bash
+# Usage: deploy/deploy.sh ["commit message"]
 set -e
+
+cd "$(dirname "$0")/.."
 
 echo "Starting deployment..."
 
-echo "Checking front-end build is committed..."
-npm run build --silent
-if [ -n "$(git status --porcelain -- public/build)" ]; then
-    echo "ABORT: public/build changed after rebuilding. Commit and push the new build, then deploy again."
+branch="$(git rev-parse --abbrev-ref HEAD)"
+if [ "$branch" != "master" ]; then
+    echo "ABORT: on branch '$branch'. Switch to master to deploy."
     exit 1
 fi
+
+echo "Building front-end assets..."
+npm run build --silent
+
+if [ -n "$(git status --porcelain)" ]; then
+    echo "Changes to be committed:"
+    git status --short
+
+    message="$1"
+    if [ -z "$message" ]; then
+        read -r -p "Commit message [Deploy $(date '+%Y-%m-%d %H:%M')]: " message
+        message="${message:-Deploy $(date '+%Y-%m-%d %H:%M')}"
+    fi
+
+    git add -A
+    git commit -m "$message"
+else
+    echo "Working tree clean, nothing to commit."
+fi
+
+echo "Pushing to origin/master..."
+git push origin master
 
 ssh evntfy << 'EOF'
 set -e

@@ -296,7 +296,7 @@
                             </p>
                             <a href="https://wa.me/254717838061?text={{ urlencode('Hello Gentriiq Safaris & Tours, tell me more about ' . $destination->name . ' tours: ' . route('destinations.show', $destination)) }}"
                                 target="_blank" rel="noopener noreferrer"
-                                class="mt-3 inline-flex items-center gap-1.5 text-xs font-bold text-[#D96B27] hover:underline">
+                                class="mt-2 inline-flex items-center gap-1.5 py-1 text-xs font-bold text-[#D96B27] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D96B27]">
                                 Inquire About {{ $destination->name }} &rarr;
                             </a>
                         </div>

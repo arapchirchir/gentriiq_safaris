@@ -69,10 +69,10 @@
     <x-footer />
 
     <!-- Sticky Quick WhatsApp Floating Button (Mobile & Desktop) -->
-    <aside aria-label="Quick contact" class="fixed right-5 bottom-6 z-40">
+    <aside aria-label="Quick contact" class="fixed right-3 bottom-4 z-40 sm:right-5 sm:bottom-6">
         <a href="https://wa.me/254717838061?text=Hello%20Gentriiq%20Safaris,%20I%20would%20like%20to%20plan%20a%20safari."
             target="_blank" rel="noopener noreferrer"
-            class="group flex items-center gap-2 rounded-full bg-[#25D366] px-4 py-3 text-sm font-semibold text-white shadow-lg transition-transform hover:scale-105 hover:bg-[#20ba59] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#25D366]"
+            class="group flex items-center gap-2 rounded-full bg-[#25D366] p-3 sm:px-4 text-sm font-semibold text-white shadow-lg transition-transform hover:scale-105 hover:bg-[#20ba59] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#25D366]"
             aria-label="Chat with Gentriiq Safaris & Tours on WhatsApp">
             <svg class="size-5 fill-current" viewBox="0 0 24 24" aria-hidden="true">
                 <path

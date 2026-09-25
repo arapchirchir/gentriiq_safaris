@@ -1,6 +1,6 @@
 <footer class="border-t border-[#24140E]/10 bg-[#180D08] text-[#FAF6F0] dark:border-white/10">
     <!-- Main Footer Content -->
-    <div class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+    <div class="mx-auto max-w-7xl px-4 pt-16 pb-24 sm:px-6 sm:pb-16 lg:px-8">
         <div class="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-5">
 
             <!-- Brand Column -->
