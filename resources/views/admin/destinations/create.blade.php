@@ -13,7 +13,7 @@
             </div>
         </div>
 
-        <form method="POST" action="{{ route('admin.destinations.store') }}" class="space-y-6">
+        <form method="POST" action="{{ route('admin.destinations.store') }}" enctype="multipart/form-data" class="space-y-6">
             @csrf
 
             {{-- Core Fields --}}
@@ -46,18 +46,8 @@
             </div>
 
             {{-- Image --}}
-            <div class="rounded-sm border border-black/10 bg-white p-6 shadow-xs dark:border-white/10 dark:bg-[#24140E] space-y-4"
-                x-data="{ url: @js(old('image')) }">
-                <h3 class="text-xs font-bold uppercase tracking-wider text-[#D96B27]">Image</h3>
-                <div>
-                    <label class="block text-xs font-bold uppercase tracking-wider text-[#6E635C] dark:text-[#FAF6F0]/70">Image URL</label>
-                    <input type="url" name="image" x-model="url" maxlength="255"
-                        placeholder="https://images.unsplash.com/..."
-                        class="mt-1.5 w-full rounded-sm border border-black/20 bg-white px-3.5 py-2.5 text-sm text-[#211915] focus:outline-2 focus:outline-[#D96B27] dark:border-white/20 dark:bg-[#180D08] dark:text-white">
-                </div>
-                <div x-show="url" class="mt-3">
-                    <img :src="url" alt="Image preview" class="h-48 w-full rounded-sm object-cover">
-                </div>
+            <div class="rounded-sm border border-black/10 bg-white p-6 shadow-xs dark:border-white/10 dark:bg-[#24140E]">
+                <x-photo-field name="image" label="Image" :value="old('image')" />
             </div>
 
             {{-- Visibility --}}

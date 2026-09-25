@@ -31,7 +31,7 @@
     <meta property="og:title"
         content="{{ $title ? $title . ' | Gentriiq Safaris & Tours' : 'Gentriiq Safaris & Tours — Authentic East African Safaris & Adventures' }}">
     <meta property="og:description" content="{{ $description }}">
-    <meta property="og:image" content="{{ $ogImage ?? asset('assets/logo.jpg') }}">
+    <meta property="og:image" content="{{ $ogImage ? url($ogImage) : asset('assets/logo.jpg') }}">
     <meta property="og:site_name" content="Gentriiq Safaris & Tours">
 
     <!-- Twitter -->
@@ -39,7 +39,7 @@
     <meta name="twitter:title"
         content="{{ $title ? $title . ' | Gentriiq Safaris & Tours' : 'Gentriiq Safaris & Tours — Authentic East African Safaris & Adventures' }}">
     <meta name="twitter:description" content="{{ $description }}">
-    <meta name="twitter:image" content="{{ $ogImage ?? asset('assets/logo.jpg') }}">
+    <meta name="twitter:image" content="{{ $ogImage ? url($ogImage) : asset('assets/logo.jpg') }}">
 
     <!-- Favicon -->
     <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="any">

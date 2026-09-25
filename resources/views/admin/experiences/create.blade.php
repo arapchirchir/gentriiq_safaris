@@ -12,7 +12,7 @@
             </div>
         </div>
 
-        <form method="POST" action="{{ route('admin.experiences.store') }}" class="space-y-6">
+        <form method="POST" action="{{ route('admin.experiences.store') }}" enctype="multipart/form-data" class="space-y-6">
             @csrf
             @include('admin.experiences._form', ['experience' => new \App\Models\Experience(['show_in_planner' => true])])
 

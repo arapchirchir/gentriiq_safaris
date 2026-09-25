@@ -44,7 +44,7 @@ Route::middleware(['auth', 'role'])->group(function () {
     Route::get('/staff', DashboardController::class)->name('admin.dashboard');
     Route::get('/dashboard', fn () => redirect()->route('admin.dashboard'))->name('dashboard');
 
-    // Safari Proposals / Inquiries Management (Sales & Admin)
+    // Safari plans / Inquiries Management (Sales & Admin)
     Route::middleware(['role:sales,admin,super_admin'])->prefix('staff/inquiries')->name('admin.inquiries.')->group(function () {
         Route::get('/', [AdminInquiryController::class, 'index'])->name('index');
         Route::get('/{inquiry}', [AdminInquiryController::class, 'show'])->name('show');

@@ -26,7 +26,7 @@ test('super admin has full access to dashboard, inquiries, and tours', function 
     $this->actingAs($superAdmin)
         ->get(route('admin.inquiries.index'))
         ->assertOk()
-        ->assertSee('Safari Proposals');
+        ->assertSee('Safari plans');
 
     $this->actingAs($superAdmin)
         ->get(route('admin.tours.index'))
@@ -190,9 +190,10 @@ test('destination image URLs cannot break out of the alpine expression', functio
     $this->actingAs($editor)
         ->get(route('admin.destinations.edit', $destination))
         ->assertOk()
+        // Raw quotes never reach the page; inside the Alpine script the link is JS-encoded.
+        // (In plain value="" / src="" attributes it is HTML-escaped as &#039;, which is safe there.)
         ->assertDontSee("');alert(", false)
-        ->assertDontSee('&#039;);alert(', false)
-        ->assertSee("url: 'https:\\/\\/x.com\\/a?b=\\u0027);alert(document.cookie);(\\u0027'", false);
+        ->assertSee("link: 'https:\\/\\/x.com\\/a?b=\\u0027);alert(document.cookie);(\\u0027'", false);
 
     $this->actingAs($editor)
         ->from(route('admin.destinations.create'))
@@ -201,7 +202,8 @@ test('destination image URLs cannot break out of the alpine expression', functio
     $this->actingAs($editor)
         ->get(route('admin.destinations.create'))
         ->assertOk()
+        // Raw quotes never reach the page; inside the Alpine script the link is JS-encoded.
+        // (In plain value="" / src="" attributes it is HTML-escaped as &#039;, which is safe there.)
         ->assertDontSee("');alert(", false)
-        ->assertDontSee('&#039;);alert(', false)
-        ->assertSee("url: 'https:\\/\\/x.com\\/a?b=\\u0027);alert(document.cookie);(\\u0027'", false);
+        ->assertSee("link: 'https:\\/\\/x.com\\/a?b=\\u0027);alert(document.cookie);(\\u0027'", false);
 });

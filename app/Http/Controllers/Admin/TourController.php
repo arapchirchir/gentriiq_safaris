@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Actions\SavePhoto;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SaveTourRequest;
 use App\Models\Destination;
@@ -43,9 +44,10 @@ class TourController extends Controller
         return view('admin.tours.create', compact('destinations', 'experiences'));
     }
 
-    public function store(SaveTourRequest $request): RedirectResponse
+    public function store(SaveTourRequest $request, SavePhoto $photos): RedirectResponse
     {
         $validated = $request->validated();
+        $validated['hero_image'] = $photos->resolve($request->file('hero_image_upload'), $validated['hero_image'] ?? null, 'tours');
 
         $tour = DB::transaction(function () use ($validated, $request): Tour {
             $tour = Tour::create($this->coreFields($validated, $request));
@@ -67,23 +69,27 @@ class TourController extends Controller
         return view('admin.tours.edit', compact('tour', 'destinations', 'experiences'));
     }
 
-    public function update(SaveTourRequest $request, Tour $tour): RedirectResponse
+    public function update(SaveTourRequest $request, Tour $tour, SavePhoto $photos): RedirectResponse
     {
         $validated = $request->validated();
+        $validated['hero_image'] = $photos->resolve($request->file('hero_image_upload'), $validated['hero_image'] ?? null, 'tours');
+        $previousImage = $tour->hero_image;
 
         DB::transaction(function () use ($tour, $validated, $request): void {
             $tour->update($this->coreFields($validated, $request));
             $this->saveRelations($tour, $validated);
         });
+        $photos->discard($previousImage, $tour->hero_image);
 
         return redirect()->route('admin.tours.edit', $tour)
             ->with('success', "Tour '{$tour->title}' updated successfully.");
     }
 
-    public function destroy(Tour $tour): RedirectResponse
+    public function destroy(Tour $tour, SavePhoto $photos): RedirectResponse
     {
         $title = $tour->title;
         $tour->delete();
+        $photos->discard($tour->hero_image);
 
         return redirect()->route('admin.tours.index')
             ->with('success', "Tour '{$title}' deleted.");

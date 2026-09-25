@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Actions\RenderRichText;
 use App\Models\Destination;
+use App\Rules\PhotoSource;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
@@ -56,7 +57,9 @@ class SaveTourRequest extends FormRequest
             'badge' => ['nullable', 'string', 'max:50'],
             'country' => ['nullable', 'string', 'max:255'],
             'location_summary' => ['nullable', 'string', 'max:255'],
-            'hero_image' => ['required_if:status,published', 'nullable', 'url:http,https', 'max:255'],
+            // Published tours need a photo: an uploaded file, a link, or the photo already saved.
+            'hero_image' => [Rule::requiredIf(fn () => $this->input('status') === 'published' && ! $this->hasFile('hero_image_upload')), 'nullable', new PhotoSource],
+            'hero_image_upload' => PhotoSource::uploadRules(),
             'status' => ['required', 'string', 'in:draft,published,archived'],
             'featured' => ['nullable', 'boolean'],
             'sort_order' => ['nullable', 'integer', 'min:0', 'max:2147483647'],

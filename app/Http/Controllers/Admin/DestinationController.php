@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Actions\SavePhoto;
 use App\Http\Controllers\Controller;
 use App\Models\Destination;
+use App\Rules\PhotoSource;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -46,7 +48,9 @@ class DestinationController extends Controller
     {
         $validated = $this->validateDestination($request);
 
+        $previousImage = $destination->image;
         $destination->update($validated);
+        app(SavePhoto::class)->discard($previousImage, $destination->image);
 
         return redirect()->route('admin.destinations.edit', $destination)
             ->with('success', "Destination '{$destination->name}' updated successfully.");
@@ -56,6 +60,7 @@ class DestinationController extends Controller
     {
         $name = $destination->name;
         $destination->delete();
+        app(SavePhoto::class)->discard($destination->image);
 
         return redirect()->route('admin.destinations.index')
             ->with('success', "Destination '{$name}' deleted.");
@@ -69,13 +74,16 @@ class DestinationController extends Controller
             'featured_badge' => ['nullable', 'string', 'max:50'],
             'summary' => ['required', 'string', 'max:500'],
             'description' => ['nullable', 'string'],
-            'image' => ['nullable', 'url:http,https', 'max:255'],
+            'image' => ['nullable', new PhotoSource],
+            'image_upload' => PhotoSource::uploadRules(),
             'featured' => ['nullable', 'boolean'],
             'sort_order' => ['nullable', 'integer', 'min:0'],
         ]);
 
         $validated['featured'] = $request->boolean('featured');
         $validated['sort_order'] = $validated['sort_order'] ?? 0;
+        $validated['image'] = app(SavePhoto::class)->resolve($request->file('image_upload'), $validated['image'] ?? null, 'destinations');
+        unset($validated['image_upload']);
 
         return $validated;
     }

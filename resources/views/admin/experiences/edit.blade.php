@@ -18,7 +18,7 @@
 
         <x-form-error name="experience" />
 
-        <form id="experience-form" method="POST" action="{{ route('admin.experiences.update', $experience) }}" class="space-y-6">
+        <form id="experience-form" method="POST" enctype="multipart/form-data" action="{{ route('admin.experiences.update', $experience) }}" class="space-y-6">
             @csrf
             @method('PUT')
             @include('admin.experiences._form')

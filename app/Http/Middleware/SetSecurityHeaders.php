@@ -29,12 +29,13 @@ class SetSecurityHeaders
             $vite = ' '.$origin.' '.preg_replace('#^http#', 'ws', $origin);
         }
 
-        // Alpine.js requires unsafe-inline + unsafe-eval; Unsplash images are used in the trip planner form.
+        // Alpine.js requires unsafe-inline + unsafe-eval; Unsplash images are used in the trip planner form;
+        // blob: lets the admin preview a photo before uploading it.
         $csp = implode(' ', [
             "default-src 'self';",
             "script-src 'self' 'unsafe-inline' 'unsafe-eval'{$vite};",
             "style-src 'self' 'unsafe-inline'{$vite};",
-            "img-src 'self' data: https://images.unsplash.com https://og.tailwindui.com{$vite};",
+            "img-src 'self' data: blob: https://images.unsplash.com https://og.tailwindui.com{$vite};",
             "font-src 'self' data:{$vite};",
             "connect-src 'self'{$vite};",
             "frame-src 'none';",
