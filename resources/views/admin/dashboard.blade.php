@@ -9,9 +9,10 @@
                     Jambo, {{ auth()->user()->name }}!
                 </h2>
                 <p class="mt-1 text-xs text-[#6E635C] dark:text-[#FAF6F0]/70">
-                    Gentriiq Safaris operations desk. Here is your current performance snapshot and customer inquiries.
+                    Gentriiq Safaris operations desk. Here is your current performance snapshot{{ $canSeeInquiries ? ' and customer inquiries' : '' }}.
                 </p>
             </div>
+            @if ($canSeeInquiries)
             <div class="flex items-center gap-3">
                 <a href="{{ route('admin.inquiries.index') }}"
                     class="inline-flex items-center gap-2 rounded-sm bg-[#D96B27] px-4 py-2.5 text-xs font-bold text-white shadow-xs transition-colors hover:bg-[#BF5A1B]">
@@ -22,10 +23,12 @@
                     <span>View All Inquiries</span>
                 </a>
             </div>
+            @endif
         </div>
 
         <!-- Metric Cards Grid -->
         <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            @if ($canSeeInquiries)
             <!-- Total Inquiries -->
             <div
                 class="rounded-sm border border-black/10 bg-white p-5 shadow-xs dark:border-white/10 dark:bg-[#24140E]">
@@ -63,6 +66,7 @@
                 </div>
             </div>
 
+            @endif
             <!-- Active Safari Packages -->
             <div
                 class="rounded-sm border border-black/10 bg-white p-5 shadow-xs dark:border-white/10 dark:bg-[#24140E]">
@@ -105,6 +109,7 @@
             </div>
         </div>
 
+        @if ($canSeeInquiries)
         <!-- Recent Inquiries Section -->
         <div class="rounded-sm border border-black/10 bg-white shadow-xs dark:border-white/10 dark:bg-[#24140E]">
             <div
@@ -185,6 +190,7 @@
                 </table>
             </div>
         </div>
+        @endif
     </div>
 
 </x-layouts.admin>

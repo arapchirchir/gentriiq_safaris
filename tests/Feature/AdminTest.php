@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Destination;
+use App\Models\Inquiry;
 use App\Models\Tour;
 use App\Models\User;
 
@@ -166,4 +167,35 @@ test('destination image URLs cannot break out of the alpine expression', functio
         // (In plain value="" / src="" attributes it is HTML-escaped as &#039;, which is safe there.)
         ->assertDontSee("');alert(", false)
         ->assertSee("link: 'https:\\/\\/x.com\\/a?b=\\u0027);alert(document.cookie);(\\u0027'", false);
+});
+
+test('staff navigation only shows the sections each role can open', function () {
+    $sales = User::factory()->create(['role' => User::ROLE_SALES]);
+    $editor = User::factory()->create(['role' => User::ROLE_EDITOR]);
+
+    $this->actingAs($sales)->get(route('admin.dashboard'))
+        ->assertOk()
+        ->assertSee('href="'.route('admin.inquiries.index').'"', false)
+        ->assertDontSee('href="'.route('admin.tours.index').'"', false)
+        ->assertDontSee('href="'.route('admin.experiences.index').'"', false);
+
+    $this->actingAs($editor)->get(route('admin.dashboard'))
+        ->assertOk()
+        ->assertSee('href="'.route('admin.tours.index').'"', false)
+        ->assertSee('href="'.route('admin.destinations.index').'"', false)
+        ->assertDontSee('href="'.route('admin.inquiries.index').'"', false);
+});
+
+test('editors do not see guest inquiry details on the dashboard', function () {
+    $editor = User::factory()->create(['role' => User::ROLE_EDITOR]);
+    Inquiry::create([
+        'traveller_type' => 'solo', 'adults_count' => 1, 'travel_year' => '2027', 'travel_month' => 'March',
+        'travel_date' => '2027-03-01', 'duration' => '4-6_days', 'name' => 'Private Guest', 'email' => 'private.guest@example.com',
+    ]);
+
+    $this->actingAs($editor)->get(route('admin.dashboard'))
+        ->assertOk()
+        ->assertDontSee('Private Guest')
+        ->assertDontSee('private.guest@example.com')
+        ->assertDontSee('View All Inquiries');
 });

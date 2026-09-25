@@ -3,7 +3,6 @@ set -e
 
 echo "Starting deployment..."
 
-# The server does not build front-end assets, so the committed public/build must match the current code.
 echo "Checking front-end build is committed..."
 npm run build --silent
 if [ -n "$(git status --porcelain -- public/build)" ]; then
@@ -22,20 +21,19 @@ grep -qx 'APP_DEBUG=false' .env || { echo "ABORT: APP_DEBUG must be false"; exit
 
 echo "Maintenance mode enabled."
 php artisan down
-# Always bring the site back up, even if a later step fails.
+
 trap 'php artisan up' EXIT
 
 echo "1. Pulling latest code..."
 git pull origin master
 rm -f public/hot
-# Uploaded tour/destination/experience photos are served from public/storage.
+
 [ -L public/storage ] || php artisan storage:link
 
 echo "2. Installing Composer dependencies..."
 composer install --no-dev --prefer-dist --optimize-autoloader
 
 echo "3. Running migrations..."
-# Never use migrate:fresh here — it drops every table, including customer inquiries.
 php artisan migrate --force
 
 echo "4. Running seeders..."
